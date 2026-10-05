@@ -1137,7 +1137,7 @@ rebalanceBtn.addEventListener(
 
 
       adminStatus.textContent =
-        "Everyone has been rebalanced successfully.";
+        "Groupings released successfully! Participants can now see their teams.";
 
     }
 
