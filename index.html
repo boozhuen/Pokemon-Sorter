@@ -3,93 +3,863 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Pokémon Team Sorter</title>
-  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --yellow: #ffcb05;
+      --blue: #2a75bb;
+      --dark-blue: #1f4e8c;
+      --red: #ee1515;
+      --cream: #fffaf0;
+      --ink: #202124;
+      --muted: #6b7280;
+      --card: rgba(255,255,255,.96);
+      --border: #e5e7eb;
+      --shadow: 0 18px 50px rgba(0,0,0,.10);
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      color: var(--ink);
+      min-height: 100vh;
+
+      background:
+        radial-gradient(
+          circle at top left,
+          rgba(255,203,5,.30),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at bottom right,
+          rgba(42,117,187,.28),
+          transparent 34%
+        ),
+        linear-gradient(
+          135deg,
+          #f9fafb,
+          #fff8d7
+        );
+    }
+
+    .page-shell {
+      width: min(760px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 34px 0 50px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 22px;
+      padding: 26px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-card {
+      text-align: center;
+      border-top: 8px solid var(--red);
+    }
+
+    .hero-card h1 {
+      margin: 4px 0 8px;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: var(--dark-blue);
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: .74rem;
+      font-weight: 800;
+      color: var(--red);
+      margin: 0 0 8px;
+    }
+
+    .pokeball {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+
+      background:
+        radial-gradient(
+          circle at center,
+          white 0 8px,
+          #111 9px 12px,
+          transparent 13px
+        ),
+        linear-gradient(
+          #ef4444 0 46%,
+          #111 46% 54%,
+          white 54% 100%
+        );
+
+      border: 4px solid #111;
+    }
+
+    form {
+      display: grid;
+      gap: 18px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-weight: 750;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font: inherit;
+      background: white;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 3px solid rgba(42,117,187,.18);
+      border-color: var(--blue);
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .primary-btn {
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 8px 20px rgba(42,117,187,.22);
+    }
+
+    .status {
+      margin-top: 14px;
+      min-height: 22px;
+      font-weight: 650;
+    }
+
+    .waiting-card {
+      margin-top: 20px;
+      padding: 32px 24px;
+      border: 2px solid var(--blue);
+      border-radius: 18px;
+      background: #f7fbff;
+      text-align: center;
+    }
+
+    .waiting-card h2 {
+      margin: 4px 0 18px;
+      color: var(--dark-blue);
+      font-size: 2rem;
+    }
+
+    .waiting-main {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .waiting-sub {
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .waiting-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .waiting-dots span {
+      width: 10px;
+      height: 10px;
+      background: var(--blue);
+      border-radius: 50%;
+      animation: waitingPulse 1.4s infinite ease-in-out;
+    }
+
+    .waiting-dots span:nth-child(2) {
+      animation-delay: .2s;
+    }
+
+    .waiting-dots span:nth-child(3) {
+      animation-delay: .4s;
+    }
+
+    @keyframes waitingPulse {
+      0%,
+      80%,
+      100% {
+        transform: scale(.7);
+        opacity: .4;
+      }
+
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .result-card {
+      margin-top: 20px;
+      padding: 22px;
+      border: 2px solid var(--yellow);
+      border-radius: 18px;
+      background: #fffdf0;
+      text-align: center;
+    }
+
+    .result-card h2 {
+      margin: 4px 0 6px;
+      color: var(--dark-blue);
+      font-size: 2rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 8px;
+    }
+
+    footer a {
+      color: var(--dark-blue);
+      font-weight: 750;
+    }
+  </style>
 </head>
+
 <body>
+
   <main class="page-shell">
+
     <section class="card hero-card">
-      <div class="pokeball" aria-hidden="true"></div>
-      <p class="eyebrow">SPL Welfare Event</p>
-      <h1>Pokémon Team Sorter</h1>
-      <p class="subtitle">
-        Enter your details and discover your team!
+
+      <div
+        class="pokeball"
+        aria-hidden="true"
+      ></div>
+
+      <p class="eyebrow">
+        P&P Year End Function 2026
       </p>
+
+      <h1>
+        Pokémon Team Sorter
+      </h1>
+
+      <p class="subtitle">
+        Register your details and wait for your team to be released.
+      </p>
+
     </section>
 
+
     <section class="card">
+
       <form id="participantForm">
+
         <label>
           Name
-          <input id="name" type="text" required maxlength="80" placeholder="e.g. Lily Tan" />
+
+          <input
+            id="name"
+            type="text"
+            required
+            maxlength="80"
+            placeholder="e.g. Lily Tan"
+          />
         </label>
+
 
         <label>
           Group
-          <select id="group" required>
-            <option value="">Select group</option>
-            <option value="Policy">Policy</option>
-            <option value="Planning">Planning</option>
+
+          <select
+            id="group"
+            required
+          >
+
+            <option value="">
+              Select group
+            </option>
+
+            <option value="Policy">
+              Policy
+            </option>
+
+            <option value="Planning">
+              Planning
+            </option>
+
           </select>
+
         </label>
+
 
         <label>
           Department
-          <input id="department" type="text" required maxlength="40" placeholder="e.g. RPL, TPA" />
+
+          <input
+            id="department"
+            type="text"
+            required
+            maxlength="40"
+            placeholder="e.g. RPL, TPA"
+          />
         </label>
 
-       <button type="submit" class="primary-btn">
+
+        <button
+          type="submit"
+          class="primary-btn"
+        >
           Register
         </button>
+
       </form>
 
-      <div id="status" class="status" aria-live="polite"></div>
 
-        <section
-  id="waitingCard"
-  class="waiting-card hidden"
->
-  <div class="waiting-pokeball">
-    <div class="pokeball" aria-hidden="true"></div>
-  </div>
+      <div
+        id="status"
+        class="status"
+        aria-live="polite"
+      ></div>
 
-  <p class="eyebrow">
-    Registration Complete
-  </p>
 
-  <h2>
-    You're in!
-  </h2>
+      <section
+        id="waitingCard"
+        class="waiting-card hidden"
+      >
 
-  <p class="waiting-main">
-    Please do not close this page.
-  </p>
+        <div class="pokeball"></div>
 
-  <p class="waiting-sub">
-    Please wait for further instructions from the emcee on your grouping.
-  </p>
+        <p class="eyebrow">
+          Registration Complete
+        </p>
 
-  <div class="waiting-dots" aria-hidden="true">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-</section>
+        <h2>
+          You're in!
+        </h2>
 
-      <section id="resultCard" class="result-card hidden">
-        <p class="eyebrow">You have been assigned to</p>
-        <h2 id="teamName"></h2>
-        <p id="teamDetails"></p>
+        <p class="waiting-main">
+          Please do not close this page.
+        </p>
+
+        <p class="waiting-sub">
+          Please wait for further instructions from the emcee
+          on your grouping.
+        </p>
+
+        <div
+          class="waiting-dots"
+          aria-hidden="true"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
       </section>
+
+
+      <section
+        id="resultCard"
+        class="result-card hidden"
+      >
+
+        <p class="eyebrow">
+          You have been assigned to
+        </p>
+
+        <h2 id="teamName"></h2>
+
+        <p id="teamDetails"></p>
+
+      </section>
+
     </section>
 
-    
 
     <footer>
-      <a href="admin.html">Admin</a>
+      <a href="admin.html">
+        Admin
+      </a>
     </footer>
+
   </main>
 
-  <script type="module" src="participant.js"></script>
+
+  <script type="module">
+
+    // =====================================================
+    // FIREBASE IMPORTS
+    // =====================================================
+
+    import {
+      initializeApp
+    }
+    from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      where,
+      getDocs,
+      onSnapshot,
+      serverTimestamp
+    }
+    from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+
+
+    // =====================================================
+    // YOUR FIREBASE CONFIG
+    //
+    // REPLACE EVERYTHING INSIDE THIS OBJECT WITH THE
+    // CONTENTS OF YOUR EXISTING firebase-config.js
+    // =====================================================
+
+    const firebaseConfig = {
+
+      apiKey: "PASTE_YOUR_API_KEY_HERE",
+
+      authDomain: "PASTE_YOUR_AUTH_DOMAIN_HERE",
+
+      projectId: "PASTE_YOUR_PROJECT_ID_HERE",
+
+      storageBucket: "PASTE_YOUR_STORAGE_BUCKET_HERE",
+
+      messagingSenderId:
+        "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
+
+      appId:
+        "PASTE_YOUR_APP_ID_HERE"
+
+    };
+
+
+
+    // =====================================================
+    // FIREBASE
+    // =====================================================
+
+    const app =
+      initializeApp(firebaseConfig);
+
+    const db =
+      getFirestore(app);
+
+
+
+    // =====================================================
+    // PAGE ELEMENTS
+    // =====================================================
+
+    const form =
+      document.getElementById(
+        "participantForm"
+      );
+
+    const statusEl =
+      document.getElementById(
+        "status"
+      );
+
+    const waitingCard =
+      document.getElementById(
+        "waitingCard"
+      );
+
+    const resultCard =
+      document.getElementById(
+        "resultCard"
+      );
+
+    const teamNameEl =
+      document.getElementById(
+        "teamName"
+      );
+
+    const teamDetailsEl =
+      document.getElementById(
+        "teamDetails"
+      );
+
+
+    let unsubscribeParticipant = null;
+
+
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    function normalise(value) {
+
+      return value
+        .trim()
+        .replace(/\s+/g, " ");
+
+    }
+
+
+
+    function showWaitingScreen(
+      participant
+    ) {
+
+      form.classList.add(
+        "hidden"
+      );
+
+      resultCard.classList.add(
+        "hidden"
+      );
+
+      waitingCard.classList.remove(
+        "hidden"
+      );
+
+      statusEl.textContent =
+        `${participant.name}, your registration has been received.`;
+
+    }
+
+
+
+    function showTeam(
+      participant
+    ) {
+
+      form.classList.add(
+        "hidden"
+      );
+
+      waitingCard.classList.add(
+        "hidden"
+      );
+
+      resultCard.classList.remove(
+        "hidden"
+      );
+
+
+      teamNameEl.textContent =
+        participant.teamName;
+
+
+      teamDetailsEl.textContent =
+        `${participant.name} • ${participant.group} • ${participant.department}`;
+
+
+      statusEl.textContent =
+        "Your grouping has been released!";
+
+    }
+
+
+
+    // =====================================================
+    // LISTEN FOR TEAM RELEASE
+    // =====================================================
+
+    function listenForTeam(
+      participantRef
+    ) {
+
+      if (
+        unsubscribeParticipant
+      ) {
+
+        unsubscribeParticipant();
+
+      }
+
+
+      unsubscribeParticipant =
+        onSnapshot(
+
+          participantRef,
+
+          snapshot => {
+
+            if (
+              !snapshot.exists()
+            ) {
+
+              statusEl.textContent =
+                "Your registration could not be found.";
+
+              return;
+
+            }
+
+
+            const participant = {
+
+              id:
+                snapshot.id,
+
+              ...snapshot.data()
+
+            };
+
+
+            if (
+              participant.teamName
+              &&
+              Number.isInteger(
+                participant.teamIndex
+              )
+            ) {
+
+              showTeam(
+                participant
+              );
+
+            }
+
+            else {
+
+              showWaitingScreen(
+                participant
+              );
+
+            }
+
+          },
+
+          error => {
+
+            console.error(
+              error
+            );
+
+            statusEl.textContent =
+              "Unable to check your grouping. Please inform the emcee.";
+
+          }
+
+        );
+
+    }
+
+
+
+    // =====================================================
+    // REGISTER
+    // =====================================================
+
+    form.addEventListener(
+
+      "submit",
+
+      async event => {
+
+        event.preventDefault();
+
+
+        statusEl.textContent =
+          "Registering you...";
+
+
+        try {
+
+          const participant = {
+
+            name:
+              normalise(
+                document.getElementById(
+                  "name"
+                ).value
+              ),
+
+            group:
+              document.getElementById(
+                "group"
+              ).value,
+
+            department:
+              normalise(
+                document.getElementById(
+                  "department"
+                ).value
+              )
+
+          };
+
+
+          if (
+            !participant.name
+            ||
+            !participant.group
+            ||
+            !participant.department
+          ) {
+
+            throw new Error(
+              "Please complete all fields."
+            );
+
+          }
+
+
+
+          // ===============================================
+          // DUPLICATE CHECK
+          // ===============================================
+
+          const duplicateQuery =
+            query(
+
+              collection(
+                db,
+                "participants"
+              ),
+
+              where(
+                "nameLower",
+                "==",
+                participant.name.toLowerCase()
+              )
+
+            );
+
+
+          const duplicateSnap =
+            await getDocs(
+              duplicateQuery
+            );
+
+
+
+          if (
+            !duplicateSnap.empty
+          ) {
+
+            const existingDoc =
+              duplicateSnap.docs[0];
+
+
+            statusEl.textContent =
+              "You are already registered.";
+
+
+            listenForTeam(
+              existingDoc.ref
+            );
+
+            return;
+
+          }
+
+
+
+          // ===============================================
+          // SAVE AS UNASSIGNED
+          // ===============================================
+
+          const participantRef =
+            await addDoc(
+
+              collection(
+                db,
+                "participants"
+              ),
+
+              {
+
+                ...participant,
+
+                nameLower:
+                  participant.name.toLowerCase(),
+
+                teamIndex:
+                  null,
+
+                teamName:
+                  null,
+
+                createdAt:
+                  serverTimestamp()
+
+              }
+
+            );
+
+
+
+          showWaitingScreen(
+            participant
+          );
+
+
+          listenForTeam(
+            participantRef
+          );
+
+        }
+
+        catch (
+          error
+        ) {
+
+          console.error(
+            error
+          );
+
+
+          statusEl.textContent =
+            error?.message
+            ||
+            "Something went wrong. Please try again.";
+
+        }
+
+      }
+
+    );
+
+  </script>
+
 </body>
 </html>
