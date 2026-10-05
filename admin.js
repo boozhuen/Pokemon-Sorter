@@ -1036,9 +1036,7 @@ rebalanceBtn.addEventListener(
 
     const confirmed =
       confirm(
-
-        `Rebalance all ${currentParticipants.length} participants into ${teamCount} teams?`
-
+        `Assign ${currentParticipants.length} participants into ${teamCount} teams and release the groupings now?`
       );
 
 
