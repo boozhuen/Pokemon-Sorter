@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokémon Team Sorter</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page-shell">
+    <section class="card hero-card">
+      <div class="pokeball" aria-hidden="true"></div>
+      <p class="eyebrow">SPL Welfare Event</p>
+      <h1>Pokémon Team Sorter</h1>
+      <p class="subtitle">
+        Enter your details and discover your team!
+      </p>
+    </section>
+
+    <section class="card">
+      <form id="participantForm">
+        <label>
+          Name
+          <input id="name" type="text" required maxlength="80" placeholder="e.g. Zhu En" />
+        </label>
+
+        <label>
+          Group
+          <select id="group" required>
+            <option value="">Select group</option>
+            <option value="Policy">Policy</option>
+            <option value="Planning">Planning</option>
+          </select>
+        </label>
+
+        <label>
+          Department
+          <input id="department" type="text" required maxlength="40" placeholder="e.g. RPL, TPA" />
+        </label>
+
+        <button type="submit" class="primary-btn">Find My Team</button>
+      </form>
+
+      <div id="status" class="status" aria-live="polite"></div>
+
+      <section id="resultCard" class="result-card hidden">
+        <p class="eyebrow">You have been assigned to</p>
+        <h2 id="teamName"></h2>
+        <p id="teamDetails"></p>
+      </section>
+    </section>
+
+    <footer>
+      <a href="admin.html">Admin</a>
+    </footer>
+  </main>
+
+  <script type="module" src="participant.js"></script>
+</body>
+</html>
