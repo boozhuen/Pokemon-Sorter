@@ -1,25 +1,453 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Pokémon Team Sorter Admin</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-  <link rel="stylesheet" href="styles.css" />
+  <title>
+    Pokémon Team Sorter Admin
+  </title>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --yellow: #ffcb05;
+      --blue: #2a75bb;
+      --dark-blue: #1f4e8c;
+      --red: #ee1515;
+      --ink: #202124;
+      --muted: #6b7280;
+      --card: rgba(255,255,255,.96);
+      --border: #e5e7eb;
+      --shadow: 0 18px 50px rgba(0,0,0,.10);
+    }
+
+    body {
+      margin: 0;
+
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      color: var(--ink);
+
+      min-height: 100vh;
+
+      background:
+        radial-gradient(
+          circle at top left,
+          rgba(255,203,5,.30),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at bottom right,
+          rgba(42,117,187,.28),
+          transparent 34%
+        ),
+        linear-gradient(
+          135deg,
+          #f9fafb,
+          #fff8d7
+        );
+    }
+
+    .page-shell {
+      width: min(
+        1100px,
+        calc(100% - 28px)
+      );
+
+      margin: 0 auto;
+
+      padding:
+        34px
+        0
+        50px;
+    }
+
+    .card {
+      background: var(--card);
+
+      border:
+        1px
+        solid
+        rgba(255,255,255,.7);
+
+      border-radius:
+        22px;
+
+      padding:
+        26px;
+
+      margin-bottom:
+        20px;
+
+      box-shadow:
+        var(--shadow);
+    }
+
+    .hero-card {
+      text-align:
+        center;
+
+      border-top:
+        8px
+        solid
+        var(--red);
+    }
+
+    .hero-card h1 {
+      margin:
+        4px
+        0
+        8px;
+
+      font-size:
+        clamp(
+          2rem,
+          5vw,
+          3.2rem
+        );
+
+      color:
+        var(--dark-blue);
+    }
+
+    .subtitle {
+      color:
+        var(--muted);
+
+      margin:
+        0;
+    }
+
+    .eyebrow {
+      text-transform:
+        uppercase;
+
+      letter-spacing:
+        .14em;
+
+      font-size:
+        .74rem;
+
+      font-weight:
+        800;
+
+      color:
+        var(--red);
+
+      margin:
+        0 0 8px;
+    }
+
+    .pokeball {
+      width:
+        58px;
+
+      height:
+        58px;
+
+      border-radius:
+        50%;
+
+      margin:
+        0 auto 12px;
+
+      background:
+        radial-gradient(
+          circle at center,
+          white 0 8px,
+          #111 9px 12px,
+          transparent 13px
+        ),
+        linear-gradient(
+          #ef4444 0 46%,
+          #111 46% 54%,
+          white 54% 100%
+        );
+
+      border:
+        4px solid #111;
+    }
+
+    .admin-grid {
+      display:
+        grid;
+
+      gap:
+        18px;
+    }
+
+    label {
+      display:
+        grid;
+
+      gap:
+        8px;
+
+      font-weight:
+        750;
+    }
+
+    input {
+      width:
+        100%;
+
+      padding:
+        13px 14px;
+
+      border:
+        1px
+        solid
+        var(--border);
+
+      border-radius:
+        12px;
+
+      font:
+        inherit;
+
+      background:
+        white;
+    }
+
+    button {
+      border:
+        0;
+
+      border-radius:
+        12px;
+
+      padding:
+        13px 18px;
+
+      font:
+        inherit;
+
+      font-weight:
+        800;
+
+      cursor:
+        pointer;
+    }
+
+    .primary-btn {
+      background:
+        var(--blue);
+
+      color:
+        white;
+    }
+
+    .secondary-btn {
+      background:
+        var(--yellow);
+
+      color:
+        #302700;
+    }
+
+    .button-stack {
+      display:
+        flex;
+
+      flex-wrap:
+        wrap;
+
+      gap:
+        10px;
+    }
+
+    .help-text {
+      color:
+        var(--muted);
+
+      font-size:
+        .95rem;
+    }
+
+    .status {
+      margin-top:
+        14px;
+
+      min-height:
+        22px;
+
+      font-weight:
+        650;
+    }
+
+    .section-heading {
+      display:
+        flex;
+
+      justify-content:
+        space-between;
+
+      gap:
+        16px;
+
+      align-items:
+        center;
+    }
+
+    .table-wrap {
+      overflow-x:
+        auto;
+    }
+
+    table {
+      width:
+        100%;
+
+      border-collapse:
+        collapse;
+
+      margin-top:
+        12px;
+    }
+
+    th,
+    td {
+      text-align:
+        left;
+
+      padding:
+        12px 10px;
+
+      border-bottom:
+        1px
+        solid
+        var(--border);
+    }
+
+    th {
+      font-size:
+        .8rem;
+
+      text-transform:
+        uppercase;
+
+      letter-spacing:
+        .06em;
+
+      color:
+        var(--muted);
+    }
+
+    .team-grid {
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(220px, 1fr)
+        );
+
+      gap:
+        14px;
+
+      margin-top:
+        18px;
+    }
+
+    .team-tile {
+      border:
+        1px
+        solid
+        var(--border);
+
+      border-radius:
+        16px;
+
+      padding:
+        16px;
+
+      background:
+        white;
+    }
+
+    .team-tile h3 {
+      margin:
+        0 0 8px;
+
+      color:
+        var(--dark-blue);
+    }
+
+    .team-meta {
+      color:
+        var(--muted);
+
+      font-size:
+        .9rem;
+    }
+
+    footer {
+      text-align:
+        center;
+
+      padding-top:
+        8px;
+    }
+
+    footer a {
+      color:
+        var(--dark-blue);
+
+      font-weight:
+        750;
+    }
+
+    @media (
+      min-width: 760px
+    ) {
+
+      .admin-grid {
+        grid-template-columns:
+          240px
+          1fr;
+
+        align-items:
+          end;
+      }
+
+    }
+
+  </style>
+
 </head>
+
 
 <body>
 
-  <main class="page-shell wide">
 
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
+  <main class="page-shell">
 
-    <section class="card hero-card admin-hero">
 
-      <div class="pokeball" aria-hidden="true"></div>
+    <section class="card hero-card">
+
+      <div
+        class="pokeball"
+        aria-hidden="true"
+      ></div>
 
       <p class="eyebrow">
         Admin Console
@@ -30,21 +458,20 @@
       </h1>
 
       <p class="subtitle">
-        Set the number of teams, manage participants and rebalance everyone.
+        Set the number of teams, manage participants
+        and release groupings.
       </p>
 
     </section>
 
 
-    <!-- =====================================================
-         TEAM SETTINGS
-    ====================================================== -->
 
     <section class="card">
 
       <div class="admin-grid">
 
         <label>
+
           Number of teams
 
           <input
@@ -54,6 +481,7 @@
             max="30"
             value="10"
           />
+
         </label>
 
 
@@ -61,14 +489,14 @@
 
           <button
             id="saveTeamCount"
-            class="primary-btn"
+            class="secondary-btn"
           >
             Save Team Count
           </button>
 
 
           <button
-            id="rebalance"
+            id="releaseTeams"
             class="primary-btn"
           >
             Assign & Release Groupings
@@ -80,11 +508,9 @@
 
 
       <p class="help-text">
-
-        Sorting prioritises roughly equal team sizes,
+        Team assignment prioritises similar team sizes,
         Policy / Planning balance,
         and spreading departments across teams.
-
       </p>
 
 
@@ -97,9 +523,6 @@
     </section>
 
 
-    <!-- =====================================================
-         PARTICIPANTS
-    ====================================================== -->
 
     <section class="card">
 
@@ -136,34 +559,24 @@
 
             <tr>
 
-              <th>
-                Name
-              </th>
+              <th>Name</th>
 
-              <th>
-                Group
-              </th>
+              <th>Group</th>
 
-              <th>
-                Department
-              </th>
+              <th>Department</th>
 
-              <th>
-                Team
-              </th>
+              <th>Team</th>
 
-              <th>
-                Action
-              </th>
+              <th>Action</th>
 
             </tr>
 
           </thead>
 
 
-          <tbody id="participantTableBody">
-
-          </tbody>
+          <tbody
+            id="participantTableBody"
+          ></tbody>
 
         </table>
 
@@ -172,9 +585,6 @@
     </section>
 
 
-    <!-- =====================================================
-         TEAM OVERVIEW
-    ====================================================== -->
 
     <section class="card">
 
@@ -190,9 +600,6 @@
     </section>
 
 
-    <!-- =====================================================
-         FOOTER
-    ====================================================== -->
 
     <footer>
 
@@ -202,13 +609,1390 @@
 
     </footer>
 
+
   </main>
 
 
-  <script
-    type="module"
-    src="admin.js"
-  ></script>
+
+  <script type="module">
+
+
+    // =====================================================
+    // FIREBASE IMPORTS
+    // =====================================================
+
+    import {
+      initializeApp
+    }
+    from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDoc,
+      setDoc,
+      deleteDoc,
+      onSnapshot,
+      writeBatch
+    }
+    from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+
+
+    // =====================================================
+    // FIREBASE CONFIG
+    //
+    // USE THE EXACT SAME CONFIG AS index.html
+    // =====================================================
+
+    const firebaseConfig = {
+
+      apiKey:
+        "PASTE_YOUR_API_KEY_HERE",
+
+      authDomain:
+        "PASTE_YOUR_AUTH_DOMAIN_HERE",
+
+      projectId:
+        "PASTE_YOUR_PROJECT_ID_HERE",
+
+      storageBucket:
+        "PASTE_YOUR_STORAGE_BUCKET_HERE",
+
+      messagingSenderId:
+        "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
+
+      appId:
+        "PASTE_YOUR_APP_ID_HERE"
+
+    };
+
+
+
+    // =====================================================
+    // FIREBASE
+    // =====================================================
+
+    const app =
+      initializeApp(
+        firebaseConfig
+      );
+
+    const db =
+      getFirestore(
+        app
+      );
+
+
+
+    // =====================================================
+    // ELEMENTS
+    // =====================================================
+
+    const teamCountInput =
+      document.getElementById(
+        "teamCount"
+      );
+
+    const saveTeamCountBtn =
+      document.getElementById(
+        "saveTeamCount"
+      );
+
+    const releaseTeamsBtn =
+      document.getElementById(
+        "releaseTeams"
+      );
+
+    const clearAllBtn =
+      document.getElementById(
+        "clearAllParticipants"
+      );
+
+    const adminStatus =
+      document.getElementById(
+        "adminStatus"
+      );
+
+    const participantCount =
+      document.getElementById(
+        "participantCount"
+      );
+
+    const participantTableBody =
+      document.getElementById(
+        "participantTableBody"
+      );
+
+    const teamOverview =
+      document.getElementById(
+        "teamOverview"
+      );
+
+
+
+    // =====================================================
+    // TEAM NAMES
+    // =====================================================
+
+    const POKEMON_TEAM_NAMES = [
+
+      "Pikachu",
+      "Charmander",
+      "Squirtle",
+      "Bulbasaur",
+      "Eevee",
+      "Snorlax",
+      "Jigglypuff",
+      "Gengar",
+      "Dragonite",
+      "Lucario",
+
+      "Psyduck",
+      "Meowth",
+      "Togepi",
+      "Vulpix",
+      "Lapras",
+      "Mimikyu",
+      "Rowlet",
+      "Cyndaquil",
+      "Mudkip",
+      "Piplup",
+
+      "Riolu",
+      "Scorbunny",
+      "Sprigatito",
+      "Fuecoco",
+      "Quaxly",
+      "Sylveon",
+      "Umbreon",
+      "Espeon",
+      "Glaceon",
+      "Leafeon"
+
+    ];
+
+
+    let currentParticipants = [];
+
+
+
+    // =====================================================
+    // TEAM NAME
+    // =====================================================
+
+    function teamName(
+      index
+    ) {
+
+      const pokemon =
+        POKEMON_TEAM_NAMES[
+          index %
+          POKEMON_TEAM_NAMES.length
+        ];
+
+
+      return (
+        `Team ${index + 1} — ${pokemon}`
+      );
+
+    }
+
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHtml(
+      value
+    ) {
+
+      return String(
+        value ?? ""
+      )
+
+      .replaceAll(
+        "&",
+        "&amp;"
+      )
+
+      .replaceAll(
+        "<",
+        "&lt;"
+      )
+
+      .replaceAll(
+        ">",
+        "&gt;"
+      )
+
+      .replaceAll(
+        '"',
+        "&quot;"
+      )
+
+      .replaceAll(
+        "'",
+        "&#039;"
+      );
+
+    }
+
+
+
+    // =====================================================
+    // TEAM COUNT
+    // =====================================================
+
+    async function loadTeamCount() {
+
+      const settingsRef =
+        doc(
+          db,
+          "config",
+          "settings"
+        );
+
+
+      const snapshot =
+        await getDoc(
+          settingsRef
+        );
+
+
+      if (
+        snapshot.exists()
+      ) {
+
+        teamCountInput.value =
+          snapshot.data().teamCount
+          ||
+          10;
+
+      }
+
+    }
+
+
+
+    // =====================================================
+    // BALANCING
+    // =====================================================
+
+    function departmentPenalty(
+      team,
+      department
+    ) {
+
+      return team.members.filter(
+
+        person =>
+
+          (
+            person.department
+            ||
+            ""
+          ).toLowerCase()
+
+          ===
+
+          (
+            department
+            ||
+            ""
+          ).toLowerCase()
+
+      ).length;
+
+    }
+
+
+
+    function placePeople(
+      people,
+      teams
+    ) {
+
+      for (
+        const person
+        of people
+      ) {
+
+        const candidates =
+          [...teams].sort(
+
+            (
+              a,
+              b
+            ) => {
+
+              // -----------------------------------------
+              // PRIORITY 1:
+              // Keep team sizes equal
+              // -----------------------------------------
+
+              const sizeDifference =
+                a.members.length
+                -
+                b.members.length;
+
+
+              if (
+                sizeDifference !== 0
+              ) {
+
+                return sizeDifference;
+
+              }
+
+
+
+              // -----------------------------------------
+              // PRIORITY 2:
+              // Balance Policy / Planning
+              // -----------------------------------------
+
+              const aSameGroup =
+                a.members.filter(
+
+                  member =>
+                    member.group
+                    ===
+                    person.group
+
+                ).length;
+
+
+              const bSameGroup =
+                b.members.filter(
+
+                  member =>
+                    member.group
+                    ===
+                    person.group
+
+                ).length;
+
+
+              if (
+                aSameGroup
+                !==
+                bSameGroup
+              ) {
+
+                return (
+                  aSameGroup
+                  -
+                  bSameGroup
+                );
+
+              }
+
+
+
+              // -----------------------------------------
+              // PRIORITY 3:
+              // Spread departments
+              // -----------------------------------------
+
+              const departmentDifference =
+
+                departmentPenalty(
+                  a,
+                  person.department
+                )
+
+                -
+
+                departmentPenalty(
+                  b,
+                  person.department
+                );
+
+
+              if (
+                departmentDifference
+                !==
+                0
+              ) {
+
+                return departmentDifference;
+
+              }
+
+
+
+              // -----------------------------------------
+              // RANDOM TIE BREAK
+              // -----------------------------------------
+
+              return (
+                Math.random()
+                -
+                0.5
+              );
+
+            }
+
+          );
+
+
+        candidates[0]
+          .members
+          .push(
+            person
+          );
+
+      }
+
+    }
+
+
+
+    function rebalanceParticipants(
+      participants,
+      teamCount
+    ) {
+
+      const teams =
+        Array.from(
+
+          {
+            length:
+              teamCount
+          },
+
+          (
+            _,
+            index
+          ) => ({
+
+            index:
+              index,
+
+            name:
+              teamName(
+                index
+              ),
+
+            members:
+              []
+
+          })
+
+        );
+
+
+
+      const policy =
+        participants
+
+          .filter(
+            person =>
+              person.group
+              ===
+              "Policy"
+          )
+
+          .sort(
+            () =>
+              Math.random()
+              -
+              0.5
+          );
+
+
+
+      const planning =
+        participants
+
+          .filter(
+            person =>
+              person.group
+              ===
+              "Planning"
+          )
+
+          .sort(
+            () =>
+              Math.random()
+              -
+              0.5
+          );
+
+
+
+      const first =
+        Math.random()
+        <
+        0.5
+
+        ?
+
+        policy
+
+        :
+
+        planning;
+
+
+
+      const second =
+        first
+        ===
+        policy
+
+        ?
+
+        planning
+
+        :
+
+        policy;
+
+
+
+      placePeople(
+        first,
+        teams
+      );
+
+
+      placePeople(
+        second,
+        teams
+      );
+
+
+      return teams;
+
+    }
+
+
+
+    // =====================================================
+    // RENDER PARTICIPANTS
+    // =====================================================
+
+    function renderParticipants(
+      participants
+    ) {
+
+      participantCount.textContent =
+
+        `${participants.length} participant${
+          participants.length
+          ===
+          1
+          ?
+          ""
+          :
+          "s"
+        }`;
+
+
+
+      participantTableBody.innerHTML =
+
+        participants
+
+          .slice()
+
+          .sort(
+            (
+              a,
+              b
+            ) => {
+
+              const aTeam =
+                Number.isInteger(
+                  a.teamIndex
+                )
+                ?
+                a.teamIndex
+                :
+                999;
+
+
+              const bTeam =
+                Number.isInteger(
+                  b.teamIndex
+                )
+                ?
+                b.teamIndex
+                :
+                999;
+
+
+              if (
+                aTeam
+                !==
+                bTeam
+              ) {
+
+                return (
+                  aTeam
+                  -
+                  bTeam
+                );
+
+              }
+
+
+              return (
+                a.name
+                ||
+                ""
+              ).localeCompare(
+                b.name
+                ||
+                ""
+              );
+
+            }
+          )
+
+          .map(
+
+            person => `
+
+              <tr>
+
+                <td>
+                  ${escapeHtml(
+                    person.name
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    person.group
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    person.department
+                  )}
+                </td>
+
+                <td>
+                  ${
+                    escapeHtml(
+                      person.teamName
+                      ||
+                      "Waiting"
+                    )
+                  }
+                </td>
+
+                <td>
+
+                  <button
+                    class="remove-participant-btn secondary-btn"
+                    data-id="${escapeHtml(person.id)}"
+                    data-name="${escapeHtml(person.name)}"
+                  >
+                    Remove
+                  </button>
+
+                </td>
+
+              </tr>
+
+            `
+
+          )
+
+          .join("");
+
+
+
+      // =================================================
+      // REMOVE BUTTONS
+      // =================================================
+
+      document
+        .querySelectorAll(
+          ".remove-participant-btn"
+        )
+        .forEach(
+
+          button => {
+
+            button.addEventListener(
+
+              "click",
+
+              async () => {
+
+                const participantId =
+                  button.dataset.id;
+
+
+                const participantName =
+                  button.dataset.name;
+
+
+                const confirmed =
+                  confirm(
+
+                    `Remove ${participantName} from the participant list?`
+
+                  );
+
+
+                if (
+                  !confirmed
+                ) {
+
+                  return;
+
+                }
+
+
+                try {
+
+                  await deleteDoc(
+
+                    doc(
+                      db,
+                      "participants",
+                      participantId
+                    )
+
+                  );
+
+
+                  adminStatus.textContent =
+                    `${participantName} has been removed.`;
+
+                }
+
+                catch (
+                  error
+                ) {
+
+                  console.error(
+                    error
+                  );
+
+
+                  adminStatus.textContent =
+                    "Could not remove participant.";
+
+                }
+
+              }
+
+            );
+
+          }
+
+        );
+
+
+
+      // =================================================
+      // TEAM OVERVIEW
+      // =================================================
+
+      const teamCount =
+        Number(
+          teamCountInput.value
+          ||
+          10
+        );
+
+
+      const teams =
+        Array.from(
+
+          {
+            length:
+              teamCount
+          },
+
+          (
+            _,
+            index
+          ) => ({
+
+            index:
+              index,
+
+            name:
+              teamName(
+                index
+              ),
+
+            members:
+              participants.filter(
+
+                person =>
+                  person.teamIndex
+                  ===
+                  index
+
+              )
+
+          })
+
+        );
+
+
+
+      teamOverview.innerHTML =
+
+        teams
+
+          .map(
+
+            team => {
+
+              const policy =
+                team.members.filter(
+
+                  person =>
+                    person.group
+                    ===
+                    "Policy"
+
+                ).length;
+
+
+              const planning =
+                team.members.filter(
+
+                  person =>
+                    person.group
+                    ===
+                    "Planning"
+
+                ).length;
+
+
+              const memberNames =
+                team.members
+
+                  .map(
+                    person =>
+                      escapeHtml(
+                        person.name
+                      )
+                  )
+
+                  .join(
+                    ", "
+                  );
+
+
+              return `
+
+                <article class="team-tile">
+
+                  <h3>
+                    ${escapeHtml(
+                      team.name
+                    )}
+                  </h3>
+
+                  <p class="team-meta">
+
+                    ${team.members.length}
+                    total
+
+                    •
+
+                    ${policy}
+                    Policy
+
+                    •
+
+                    ${planning}
+                    Planning
+
+                  </p>
+
+                  <p>
+
+                    ${
+                      memberNames
+                      ||
+                      "No members yet"
+                    }
+
+                  </p>
+
+                </article>
+
+              `;
+
+            }
+
+          )
+
+          .join("");
+
+    }
+
+
+
+    // =====================================================
+    // SAVE TEAM COUNT
+    // =====================================================
+
+    saveTeamCountBtn.addEventListener(
+
+      "click",
+
+      async () => {
+
+        const count =
+          Number(
+            teamCountInput.value
+          );
+
+
+        if (
+          !Number.isInteger(
+            count
+          )
+
+          ||
+
+          count < 2
+
+          ||
+
+          count > 30
+        ) {
+
+          adminStatus.textContent =
+            "Please choose between 2 and 30 teams.";
+
+          return;
+
+        }
+
+
+        try {
+
+          await setDoc(
+
+            doc(
+              db,
+              "config",
+              "settings"
+            ),
+
+            {
+              teamCount:
+                count
+            },
+
+            {
+              merge:
+                true
+            }
+
+          );
+
+
+          adminStatus.textContent =
+            `Saved: ${count} teams.`;
+
+
+          renderParticipants(
+            currentParticipants
+          );
+
+        }
+
+        catch (
+          error
+        ) {
+
+          console.error(
+            error
+          );
+
+
+          adminStatus.textContent =
+            "Could not save team count.";
+
+        }
+
+      }
+
+    );
+
+
+
+    // =====================================================
+    // ASSIGN & RELEASE TEAMS
+    // =====================================================
+
+    releaseTeamsBtn.addEventListener(
+
+      "click",
+
+      async () => {
+
+        const teamCount =
+          Number(
+            teamCountInput.value
+          );
+
+
+        if (
+          !Number.isInteger(
+            teamCount
+          )
+
+          ||
+
+          teamCount < 2
+
+          ||
+
+          teamCount > 30
+        ) {
+
+          adminStatus.textContent =
+            "Please choose between 2 and 30 teams.";
+
+          return;
+
+        }
+
+
+        if (
+          currentParticipants.length
+          ===
+          0
+        ) {
+
+          adminStatus.textContent =
+            "There are no participants yet.";
+
+          return;
+
+        }
+
+
+        const confirmed =
+          confirm(
+
+            `Assign ${currentParticipants.length} participants into ${teamCount} teams and release the groupings now?`
+
+          );
+
+
+        if (
+          !confirmed
+        ) {
+
+          return;
+
+        }
+
+
+        adminStatus.textContent =
+          "Assigning teams and releasing groupings...";
+
+
+        try {
+
+          const teams =
+            rebalanceParticipants(
+
+              currentParticipants,
+
+              teamCount
+
+            );
+
+
+          const batch =
+            writeBatch(
+              db
+            );
+
+
+
+          batch.set(
+
+            doc(
+              db,
+              "config",
+              "settings"
+            ),
+
+            {
+
+              teamCount:
+                teamCount
+
+            },
+
+            {
+
+              merge:
+                true
+
+            }
+
+          );
+
+
+
+          for (
+            const team
+            of teams
+          ) {
+
+            for (
+              const person
+              of team.members
+            ) {
+
+              batch.update(
+
+                doc(
+                  db,
+                  "participants",
+                  person.id
+                ),
+
+                {
+
+                  teamIndex:
+                    team.index,
+
+                  teamName:
+                    team.name
+
+                }
+
+              );
+
+            }
+
+          }
+
+
+
+          await batch.commit();
+
+
+          adminStatus.textContent =
+            "Groupings released successfully! Participants can now see their teams.";
+
+        }
+
+        catch (
+          error
+        ) {
+
+          console.error(
+            error
+          );
+
+
+          adminStatus.textContent =
+            "Something went wrong while assigning teams.";
+
+        }
+
+      }
+
+    );
+
+
+
+    // =====================================================
+    // CLEAR ALL
+    // =====================================================
+
+    clearAllBtn.addEventListener(
+
+      "click",
+
+      async () => {
+
+        if (
+          currentParticipants.length
+          ===
+          0
+        ) {
+
+          adminStatus.textContent =
+            "There are no participants to clear.";
+
+          return;
+
+        }
+
+
+        const confirmed =
+          confirm(
+
+            `Are you sure you want to delete all ${currentParticipants.length} participants?`
+
+          );
+
+
+        if (
+          !confirmed
+        ) {
+
+          return;
+
+        }
+
+
+        const finalConfirmation =
+          confirm(
+
+            "Final confirmation: delete ALL participant records? This cannot be undone."
+
+          );
+
+
+        if (
+          !finalConfirmation
+        ) {
+
+          return;
+
+        }
+
+
+        try {
+
+          const batch =
+            writeBatch(
+              db
+            );
+
+
+          currentParticipants
+            .forEach(
+
+              participant => {
+
+                batch.delete(
+
+                  doc(
+                    db,
+                    "participants",
+                    participant.id
+                  )
+
+                );
+
+              }
+
+            );
+
+
+          await batch.commit();
+
+
+          adminStatus.textContent =
+            "All participants have been cleared.";
+
+        }
+
+        catch (
+          error
+        ) {
+
+          console.error(
+            error
+          );
+
+
+          adminStatus.textContent =
+            "Could not clear participants.";
+
+        }
+
+      }
+
+    );
+
+
+
+    // =====================================================
+    // LIVE PARTICIPANT LIST
+    //
+    // THIS MAKES NEW REGISTRATIONS APPEAR AUTOMATICALLY.
+    // =====================================================
+
+    onSnapshot(
+
+      collection(
+        db,
+        "participants"
+      ),
+
+      snapshot => {
+
+        currentParticipants =
+          snapshot.docs.map(
+
+            document => ({
+
+              id:
+                document.id,
+
+              ...document.data()
+
+            })
+
+          );
+
+
+        renderParticipants(
+          currentParticipants
+        );
+
+      },
+
+      error => {
+
+        console.error(
+          error
+        );
+
+
+        adminStatus.textContent =
+          "Unable to load participants.";
+
+      }
+
+    );
+
+
+
+    // =====================================================
+    // START
+    // =====================================================
+
+    await loadTeamCount();
+
+
+    renderParticipants(
+      currentParticipants
+    );
+
+
+  </script>
 
 </body>
 </html>
