@@ -3,79 +3,212 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Pokémon Team Sorter Admin</title>
+
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
+
   <main class="page-shell wide">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
     <section class="card hero-card admin-hero">
+
       <div class="pokeball" aria-hidden="true"></div>
-      <p class="eyebrow">Admin Console</p>
-      <h1>Pokémon Team Control Centre</h1>
-      <p class="subtitle">
-        Set the number of teams and rebalance participants.
+
+      <p class="eyebrow">
+        Admin Console
       </p>
+
+      <h1>
+        Pokémon Team Control Centre
+      </h1>
+
+      <p class="subtitle">
+        Set the number of teams, manage participants and rebalance everyone.
+      </p>
+
     </section>
 
+
+    <!-- =====================================================
+         TEAM SETTINGS
+    ====================================================== -->
+
     <section class="card">
+
       <div class="admin-grid">
+
         <label>
           Number of teams
-          <input id="teamCount" type="number" min="2" max="30" value="10" />
+
+          <input
+            id="teamCount"
+            type="number"
+            min="2"
+            max="30"
+            value="10"
+          />
         </label>
 
+
         <div class="button-stack">
-          <button id="saveTeamCount" class="primary-btn">Save Team Count</button>
-          <button id="rebalance" class="secondary-btn">Rebalance Everyone</button>
+
+          <button
+            id="saveTeamCount"
+            class="primary-btn"
+          >
+            Save Team Count
+          </button>
+
+
+          <button
+            id="rebalance"
+            class="secondary-btn"
+          >
+            Rebalance Everyone
+          </button>
+
         </div>
+
       </div>
+
 
       <p class="help-text">
-        Sorting prioritises a roughly even Policy / Planning split in every team,
-        then spreads departments as evenly as possible.
+
+        Sorting prioritises roughly equal team sizes,
+        Policy / Planning balance,
+        and spreading departments across teams.
+
       </p>
 
-      <div id="adminStatus" class="status" aria-live="polite"></div>
+
+      <div
+        id="adminStatus"
+        class="status"
+        aria-live="polite"
+      ></div>
+
     </section>
 
+
+    <!-- =====================================================
+         PARTICIPANTS
+    ====================================================== -->
+
     <section class="card">
+
       <div class="section-heading">
+
         <div>
-          <p class="eyebrow">Live Participants</p>
-          <h2 id="participantCount">0 participants</h2>
+
+          <p class="eyebrow">
+            Live Participants
+          </p>
+
+          <h2 id="participantCount">
+            0 participants
+          </h2>
+
         </div>
+
+
+        <button
+          id="clearAllParticipants"
+          class="secondary-btn"
+        >
+          Clear All Participants
+        </button>
+
       </div>
 
-      <button id="clearAllParticipants" class="secondary-btn">
-        Clear All Participants
-      </button>
 
       <div class="table-wrap">
+
         <table>
+
           <thead>
+
             <tr>
-              <th>Name</th>
-              <th>Group</th>
-              <th>Department</th>
-              <th>Team</th>
-              <th>Action</th>
+
+              <th>
+                Name
+              </th>
+
+              <th>
+                Group
+              </th>
+
+              <th>
+                Department
+              </th>
+
+              <th>
+                Team
+              </th>
+
+              <th>
+                Action
+              </th>
+
             </tr>
+
           </thead>
-          <tbody id="participantTableBody"></tbody>
+
+
+          <tbody id="participantTableBody">
+
+          </tbody>
+
         </table>
+
       </div>
+
     </section>
+
+
+    <!-- =====================================================
+         TEAM OVERVIEW
+    ====================================================== -->
 
     <section class="card">
-      <p class="eyebrow">Team Overview</p>
-      <div id="teamOverview" class="team-grid"></div>
+
+      <p class="eyebrow">
+        Team Overview
+      </p>
+
+      <div
+        id="teamOverview"
+        class="team-grid"
+      ></div>
+
     </section>
 
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
     <footer>
-      <a href="index.html">Participant Page</a>
+
+      <a href="index.html">
+        Participant Page
+      </a>
+
     </footer>
+
   </main>
 
-  <script type="module" src="admin.js"></script>
+
+  <script
+    type="module"
+    src="admin.js"
+  ></script>
+
 </body>
 </html>
