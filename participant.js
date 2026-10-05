@@ -1,3 +1,5 @@
+console.log("participant.js loaded");
+
 import { firebaseConfig } from "./firebase-config.js";
 
 import {
