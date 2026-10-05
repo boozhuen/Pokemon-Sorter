@@ -1,170 +1,336 @@
 import { firebaseConfig } from "./firebase-config.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
 import {
   getFirestore,
   collection,
   addDoc,
-  doc,
-  getDoc,
-  getDocs,
   query,
   where,
+  getDocs,
+  onSnapshot,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+
+// ======================================================
+// FIREBASE
+// ======================================================
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+
+// ======================================================
+// PAGE ELEMENTS
+// ======================================================
+
 const form = document.getElementById("participantForm");
+
 const statusEl = document.getElementById("status");
+
+const waitingCard = document.getElementById("waitingCard");
+
 const resultCard = document.getElementById("resultCard");
+
 const teamNameEl = document.getElementById("teamName");
+
 const teamDetailsEl = document.getElementById("teamDetails");
 
-const POKEMON_TEAM_NAMES = [
-  "Pikachu",
-  "Charmander",
-  "Squirtle",
-  "Bulbasaur",
-  "Eevee",
-  "Snorlax",
-  "Jigglypuff",
-  "Gengar",
-  "Dragonite",
-  "Lucario",
-  "Psyduck",
-  "Meowth",
-  "Togepi",
-  "Vulpix",
-  "Lapras",
-  "Mimikyu",
-  "Rowlet",
-  "Cyndaquil",
-  "Mudkip",
-  "Piplup",
-  "Riolu",
-  "Scorbunny",
-  "Sprigatito",
-  "Fuecoco",
-  "Quaxly",
-  "Sylveon",
-  "Umbreon",
-  "Espeon",
-  "Glaceon",
-  "Leafeon"
-];
+
+// Holds the active Firestore listener for this participant.
+let unsubscribeParticipant = null;
+
+
+// ======================================================
+// NORMALISE TEXT
+// ======================================================
 
 function normalise(value) {
-  return value.trim().replace(/\s+/g, " ");
+
+  return value
+    .trim()
+    .replace(/\s+/g, " ");
+
 }
 
-async function getTeamCount() {
-  const configRef = doc(db, "config", "settings");
-  const snap = await getDoc(configRef);
-  return snap.exists() ? Number(snap.data().teamCount || 10) : 10;
-}
 
-async function getParticipants() {
-  const snap = await getDocs(collection(db, "participants"));
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-}
+// ======================================================
+// SHOW WAITING SCREEN
+// ======================================================
 
-function teamScore(team, incoming) {
-  const targetGroup = incoming.group;
-  const oppositeGroup = targetGroup === "Policy" ? "Planning" : "Policy";
+function showWaitingScreen(participant) {
 
-  const groupCount = team.members.filter(m => m.group === targetGroup).length;
-  const oppositeCount = team.members.filter(m => m.group === oppositeGroup).length;
-  const sameDept = team.members.filter(
-    m => (m.department || "").toLowerCase() === incoming.department.toLowerCase()
-  ).length;
+  form.classList.add("hidden");
 
-  // Lower score = better.
-  // Strongly prefer fewer members overall.
-  // Then prefer balancing Policy/Planning.
-  // Then avoid putting too many people from the same department together.
-  return (
-    team.members.length * 100 +
-    Math.max(0, groupCount - oppositeCount) * 30 +
-    sameDept * 10 +
-    Math.random()
-  );
-}
-
-function chooseTeam(participants, teamCount, incoming) {
-  const teams = Array.from({ length: teamCount }, (_, i) => ({
-    index: i,
-    name: `Team ${i + 1} — ${POKEMON_TEAM_NAMES[i % POKEMON_TEAM_NAMES.length]}`,
-    members: []
-  }));
-
-  for (const person of participants) {
-    const index = Number.isInteger(person.teamIndex) ? person.teamIndex : null;
-    if (index !== null && teams[index]) {
-      teams[index].members.push(person);
-    }
-  }
-
-  teams.sort((a, b) => teamScore(a, incoming) - teamScore(b, incoming));
-  return teams[0];
-}
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  statusEl.textContent = "Assigning your Pokémon team...";
   resultCard.classList.add("hidden");
 
-  try {
-    const participant = {
-      name: normalise(document.getElementById("name").value),
-      group: document.getElementById("group").value,
-      department: normalise(document.getElementById("department").value)
-    };
+  waitingCard.classList.remove("hidden");
 
-    if (!participant.name || !participant.group || !participant.department) {
-      throw new Error("Please complete all fields.");
-    }
+  statusEl.textContent =
+    `${participant.name}, your registration has been received.`;
 
-    // Simple duplicate check by exact normalised name.
-    const duplicateQuery = query(
-      collection(db, "participants"),
-      where("nameLower", "==", participant.name.toLowerCase())
-    );
-    const duplicateSnap = await getDocs(duplicateQuery);
+}
 
-    if (!duplicateSnap.empty) {
-      const existing = duplicateSnap.docs[0].data();
-      teamNameEl.textContent = existing.teamName || "Already assigned";
-      teamDetailsEl.textContent =
-        `${existing.name} • ${existing.group} • ${existing.department}`;
-      resultCard.classList.remove("hidden");
-      statusEl.textContent = "You were already registered, so I found your existing team.";
-      return;
-    }
 
-    const teamCount = await getTeamCount();
-    const participants = await getParticipants();
-    const chosen = chooseTeam(participants, teamCount, participant);
+// ======================================================
+// SHOW TEAM
+// ======================================================
 
-    const record = {
-      ...participant,
-      nameLower: participant.name.toLowerCase(),
-      teamIndex: chosen.index,
-      teamName: chosen.name,
-      createdAt: serverTimestamp()
-    };
+function showTeam(participant) {
 
-    await addDoc(collection(db, "participants"), record);
+  form.classList.add("hidden");
 
-    teamNameEl.textContent = chosen.name;
-    teamDetailsEl.textContent =
-      `${participant.name} • ${participant.group} • ${participant.department}`;
-    resultCard.classList.remove("hidden");
-    statusEl.textContent = "Assignment complete!";
-    form.reset();
-  } catch (error) {
-    console.error(error);
-    statusEl.textContent =
-      error?.message || "Something went wrong. Please try again.";
+  waitingCard.classList.add("hidden");
+
+  teamNameEl.textContent =
+    participant.teamName || "Team assigned";
+
+  teamDetailsEl.textContent =
+    `${participant.name} • ${participant.group} • ${participant.department}`;
+
+  resultCard.classList.remove("hidden");
+
+  statusEl.textContent =
+    "Your grouping has been released!";
+
+}
+
+
+// ======================================================
+// LISTEN FOR ADMIN TEAM ASSIGNMENT
+// ======================================================
+
+function listenForTeam(participantRef) {
+
+  // Remove an old listener if one already exists.
+  if (unsubscribeParticipant) {
+    unsubscribeParticipant();
   }
-});
+
+
+  unsubscribeParticipant = onSnapshot(
+
+    participantRef,
+
+    snapshot => {
+
+      if (!snapshot.exists()) {
+
+        statusEl.textContent =
+          "Your registration could not be found.";
+
+        return;
+
+      }
+
+
+      const participant = {
+        id: snapshot.id,
+        ...snapshot.data()
+      };
+
+
+      // The admin has assigned and released a team.
+      if (
+        participant.teamName &&
+        Number.isInteger(participant.teamIndex)
+      ) {
+
+        showTeam(participant);
+
+      }
+
+      else {
+
+        showWaitingScreen(participant);
+
+      }
+
+    },
+
+    error => {
+
+      console.error(error);
+
+      statusEl.textContent =
+        "Unable to check your grouping. Please inform the emcee.";
+
+    }
+
+  );
+
+}
+
+
+// ======================================================
+// FORM SUBMISSION
+// ======================================================
+
+form.addEventListener(
+
+  "submit",
+
+  async event => {
+
+    event.preventDefault();
+
+
+    statusEl.textContent =
+      "Registering you...";
+
+    waitingCard.classList.add("hidden");
+
+    resultCard.classList.add("hidden");
+
+
+    try {
+
+      const participant = {
+
+        name:
+          normalise(
+            document.getElementById("name").value
+          ),
+
+        group:
+          document.getElementById("group").value,
+
+        department:
+          normalise(
+            document.getElementById("department").value
+          )
+
+      };
+
+
+      // --------------------------------------------------
+      // VALIDATION
+      // --------------------------------------------------
+
+      if (
+        !participant.name ||
+        !participant.group ||
+        !participant.department
+      ) {
+
+        throw new Error(
+          "Please complete all fields."
+        );
+
+      }
+
+
+      // --------------------------------------------------
+      // DUPLICATE CHECK
+      // --------------------------------------------------
+
+      const duplicateQuery = query(
+
+        collection(
+          db,
+          "participants"
+        ),
+
+        where(
+          "nameLower",
+          "==",
+          participant.name.toLowerCase()
+        )
+
+      );
+
+
+      const duplicateSnap =
+        await getDocs(duplicateQuery);
+
+
+      // --------------------------------------------------
+      // ALREADY REGISTERED
+      // --------------------------------------------------
+
+      if (!duplicateSnap.empty) {
+
+        const existingDoc =
+          duplicateSnap.docs[0];
+
+        statusEl.textContent =
+          "You are already registered.";
+
+        listenForTeam(
+          existingDoc.ref
+        );
+
+        return;
+
+      }
+
+
+      // --------------------------------------------------
+      // CREATE PARTICIPANT
+      //
+      // IMPORTANT:
+      // No team is assigned here.
+      // The admin will assign the team later.
+      // --------------------------------------------------
+
+      const record = {
+
+        ...participant,
+
+        nameLower:
+          participant.name.toLowerCase(),
+
+        teamIndex:
+          null,
+
+        teamName:
+          null,
+
+        createdAt:
+          serverTimestamp()
+
+      };
+
+
+      const participantRef =
+        await addDoc(
+
+          collection(
+            db,
+            "participants"
+          ),
+
+          record
+
+        );
+
+
+      // --------------------------------------------------
+      // WAIT FOR ADMIN
+      // --------------------------------------------------
+
+      showWaitingScreen(participant);
+
+      listenForTeam(
+        participantRef
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      statusEl.textContent =
+        error?.message ||
+        "Something went wrong. Please try again.";
+
+    }
+
+  }
+
+);
