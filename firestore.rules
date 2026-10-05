@@ -1,23 +1,49 @@
 rules_version = '2';
 
 service cloud.firestore {
+
   match /databases/{database}/documents {
 
-    // Participant submissions.
+
+    // ==================================================
+    // PARTICIPANTS
+    // ==================================================
+
     match /participants/{participantId} {
+
+      // Allow colleagues to submit themselves
       allow create: if true;
+
+
+      // Needed so the website/admin page can read teams
       allow read: if true;
 
-      // Needed for admin rebalancing.
-      // WARNING: This is intentionally simple for an internal event.
-      // Anyone who knows the site can technically edit participant records.
+
+      // Needed for admin rebalancing
       allow update: if true;
-      allow delete: if false;
+
+
+      // Needed for Remove and Clear All
+      allow delete: if true;
+
     }
+
+
+    // ==================================================
+    // WEBSITE CONFIGURATION
+    // ==================================================
 
     match /config/{document=**} {
+
+      // Participant page needs to know team count
       allow read: if true;
+
+
+      // Admin page can change team count
       allow write: if true;
+
     }
+
   }
+
 }
