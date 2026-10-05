@@ -1050,7 +1050,7 @@ rebalanceBtn.addEventListener(
 
 
     adminStatus.textContent =
-      "Rebalancing teams...";
+      "Assigning teams and releasing groupings...";";
 
 
     try {
