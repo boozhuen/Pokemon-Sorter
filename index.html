@@ -43,12 +43,45 @@
 
       <div id="status" class="status" aria-live="polite"></div>
 
+        <section
+  id="waitingCard"
+  class="waiting-card hidden"
+>
+  <div class="waiting-pokeball">
+    <div class="pokeball" aria-hidden="true"></div>
+  </div>
+
+  <p class="eyebrow">
+    Registration Complete
+  </p>
+
+  <h2>
+    You're in!
+  </h2>
+
+  <p class="waiting-main">
+    Please do not close this page.
+  </p>
+
+  <p class="waiting-sub">
+    Please wait for further instructions from the emcee on your grouping.
+  </p>
+
+  <div class="waiting-dots" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</section>
+
       <section id="resultCard" class="result-card hidden">
         <p class="eyebrow">You have been assigned to</p>
         <h2 id="teamName"></h2>
         <p id="teamDetails"></p>
       </section>
     </section>
+
+    
 
     <footer>
       <a href="admin.html">Admin</a>
