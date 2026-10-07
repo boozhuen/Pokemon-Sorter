@@ -233,19 +233,170 @@
       }
     }
 
+    /* =====================================================
+       TEAM REVEAL
+    ===================================================== */
+    
     .result-card {
       margin-top: 20px;
-      padding: 22px;
-      border: 2px solid var(--yellow);
-      border-radius: 18px;
+      padding: 32px 24px 36px;
+      border: 3px solid var(--yellow);
+      border-radius: 22px;
       background: #fffdf0;
       text-align: center;
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, .10);
     }
-
+    
+    
+    /* Team number */
+    
     .result-card h2 {
-      margin: 4px 0 6px;
+      margin: 4px 0 0;
+    
       color: var(--dark-blue);
-      font-size: 2rem;
+    
+      font-size:
+        clamp(
+          2rem,
+          8vw,
+          3.2rem
+        );
+    
+      font-weight: 900;
+    
+      letter-spacing:
+        .04em;
+    }
+    
+    
+    /* Pokémon name */
+    
+    .result-card h3 {
+      margin:
+        4px
+        0
+        8px;
+    
+      color:
+        var(--red);
+    
+      font-size:
+        clamp(
+          1.6rem,
+          6vw,
+          2.4rem
+        );
+    
+      font-weight:
+        900;
+    
+      text-transform:
+        uppercase;
+    
+      letter-spacing:
+        .05em;
+    }
+    
+    
+    /* Pokémon image */
+    
+    .pokemon-image {
+      width:
+        min(
+          280px,
+          75vw
+        );
+    
+      height:
+        min(
+          280px,
+          75vw
+        );
+    
+      object-fit:
+        contain;
+    
+      display:
+        block;
+    
+      margin:
+        8px
+        auto
+        12px;
+    
+      filter:
+        drop-shadow(
+          0 12px 16px
+          rgba(0, 0, 0, .15)
+        );
+    }
+    
+    
+    /* Divider */
+    
+    .result-divider {
+      width:
+        80px;
+    
+      height:
+        3px;
+    
+      margin:
+        8px
+        auto
+        18px;
+    
+      background:
+        var(--yellow);
+    
+      border-radius:
+        999px;
+    }
+    
+    
+    /* "You are" */
+    
+    .result-player-label {
+      margin:
+        0
+        0
+        4px;
+    
+      color:
+        var(--muted);
+    
+      font-size:
+        .9rem;
+    
+      font-weight:
+        700;
+    
+      text-transform:
+        uppercase;
+    
+      letter-spacing:
+        .12em;
+    }
+    
+    
+    /* Participant details */
+    
+    .result-player {
+      margin:
+        0;
+    
+      color:
+        var(--ink);
+    
+      font-size:
+        1.05rem;
+    
+      font-weight:
+        750;
+    
+      line-height:
+        1.5;
     }
 
     .hidden {
@@ -398,21 +549,38 @@
       </section>
 
 
-      <section
+    <section
         id="resultCard"
         class="result-card hidden"
       >
-
+      
         <p class="eyebrow">
-          You have been assigned to
+          YOUR POKÉMON TEAM
         </p>
-
-        <h2 id="teamName"></h2>
-
-        <p id="teamDetails"></p>
-
+      
+        <h2 id="resultTeamNumber"></h2>
+      
+        <h3 id="resultPokemonName"></h3>
+      
+        <img
+          id="pokemonImage"
+          class="pokemon-image"
+          src=""
+          alt=""
+        />
+      
+        <div class="result-divider"></div>
+      
+        <p class="result-player-label">
+          Welcome, 
+        </p>
+      
+        <p
+          id="teamDetails"
+          class="result-player"
+        ></p>
+      
       </section>
-
     </section>
 
 
@@ -480,6 +648,44 @@
     const db =
       getFirestore(app);
 
+    // =====================================================
+    // Pokemon ID list
+    // ================================================
+
+    const POKEMON_IDS = {
+
+      Pikachu: 25,
+      Charmander: 4,
+      Squirtle: 7,
+      Bulbasaur: 1,
+      Eevee: 133,
+      Snorlax: 143,
+      Jigglypuff: 39,
+      Gengar: 94,
+      Dragonite: 149,
+      Lucario: 448,
+      Psyduck: 54,
+      Meowth: 52,
+      Togepi: 175,
+      Vulpix: 37,
+      Lapras: 131,
+      Mimikyu: 778,
+      Rowlet: 722,
+      Cyndaquil: 155,
+      Mudkip: 258,
+      Piplup: 393,
+      Riolu: 447,
+      Scorbunny: 813,
+      Sprigatito: 906,
+      Fuecoco: 909,
+      Quaxly: 912,
+      Sylveon: 700,
+      Umbreon: 197,
+      Espeon: 196,
+      Glaceon: 471,
+      Leafeon: 470
+    
+    };
 
 
     // =====================================================
@@ -506,16 +712,25 @@
         "resultCard"
       );
 
-    const teamNameEl =
+    const resultTeamNumberEl =
       document.getElementById(
-        "teamName"
+        "resultTeamNumber"
       );
-
+    
+    const resultPokemonNameEl =
+      document.getElementById(
+        "resultPokemonName"
+      );
+    
+    const pokemonImage =
+      document.getElementById(
+        "pokemonImage"
+      );
+    
     const teamDetailsEl =
       document.getElementById(
         "teamDetails"
       );
-
 
     let unsubscribeParticipant = null;
 
@@ -561,31 +776,104 @@
     function showTeam(
       participant
     ) {
-
+    
       form.classList.add(
         "hidden"
       );
-
+    
       waitingCard.classList.add(
         "hidden"
       );
-
+    
       resultCard.classList.remove(
         "hidden"
       );
-
-
-      teamNameEl.textContent =
+    
+    
+      // ================================================
+      // GET TEAM INFORMATION
+      // ================================================
+    
+      const teamName =
         participant.teamName;
-
-
+    
+    
+      // Example:
+      // "Team 4 — Bulbasaur"
+    
+      const parts =
+        teamName.split("—");
+    
+    
+      const teamNumber =
+        parts[0].trim();
+    
+    
+      const pokemonName =
+        parts[1]
+          ? parts[1].trim()
+          : "";
+    
+    
+    
+      // ================================================
+      // DISPLAY TEAM
+      // ================================================
+    
+      resultTeamNumberEl.textContent =
+        teamNumber;
+    
+    
+      resultPokemonNameEl.textContent =
+        pokemonName.toUpperCase();
+    
+    
+    
+      // ================================================
+      // DISPLAY POKÉMON IMAGE
+      // ================================================
+    
+      const pokemonId =
+        POKEMON_IDS[
+          pokemonName
+        ];
+    
+    
+      if (
+        pokemonId
+      ) {
+    
+        pokemonImage.src =
+          `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`;
+    
+        pokemonImage.alt =
+          `${pokemonName} Pokémon artwork`;
+    
+        pokemonImage.style.display =
+          "block";
+    
+      }
+    
+      else {
+    
+        pokemonImage.style.display =
+          "none";
+    
+      }
+    
+    
+    
+      // ================================================
+      // DISPLAY PARTICIPANT
+      // ================================================
+    
       teamDetailsEl.textContent =
         `${participant.name} • ${participant.group} • ${participant.department}`;
-
-
+    
+    
       statusEl.textContent =
         "Your grouping has been released!";
-
+    
     }
 
 
