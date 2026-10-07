@@ -15,7 +15,7 @@
 
 
   <style>
-
+    
     * {
       box-sizing: border-box;
     }
@@ -438,8 +438,58 @@
 
 <body>
 
+  <!-- =====================================================
+       ADMIN PIN SCREEN
+  ====================================================== -->
 
-  <main class="page-shell">
+  <div id="pinScreen" class="pin-screen">
+
+    <div class="pin-card">
+
+      <div class="pokeball"></div>
+
+      <p class="eyebrow">
+        Admin Access
+      </p>
+
+      <h2>
+        Enter Admin PIN
+      </h2>
+
+      <p class="pin-help">
+        Enter the PIN to access the Team Control Centre.
+      </p>
+
+      <input
+        id="adminPin"
+        type="password"
+        inputmode="numeric"
+        maxlength="6"
+        placeholder="Enter PIN"
+        autocomplete="off"
+      />
+
+      <button
+        id="unlockAdmin"
+        class="primary-btn"
+      >
+        Unlock
+      </button>
+
+      <p
+        id="pinError"
+        class="pin-error"
+      ></p>
+
+    </div>
+
+  </div>
+
+
+  <main
+    id="adminContent"
+    class="page-shell hidden"
+  >
 
 
     <section class="card hero-card">
