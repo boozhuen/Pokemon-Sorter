@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
   <meta charset="UTF-8" />
@@ -15,10 +16,15 @@
 
 
   <style>
-    
+
+    /* =====================================================
+       GENERAL
+    ===================================================== */
+
     * {
       box-sizing: border-box;
     }
+
 
     :root {
       --yellow: #ffcb05;
@@ -32,7 +38,9 @@
       --shadow: 0 18px 50px rgba(0,0,0,.10);
     }
 
+
     body {
+
       margin: 0;
 
       font-family:
@@ -64,29 +72,214 @@
           #f9fafb,
           #fff8d7
         );
+
     }
 
-    .page-shell {
-      width: min(
-        1100px,
-        calc(100% - 28px)
-      );
 
-      margin: 0 auto;
+    /* =====================================================
+       HIDDEN
+    ===================================================== */
+
+    .hidden {
+      display: none !important;
+    }
+
+
+    /* =====================================================
+       ADMIN PIN SCREEN
+    ===================================================== */
+
+    .pin-screen {
+
+      min-height: 100vh;
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      padding: 20px;
+
+    }
+
+
+    .pin-card {
+
+      width:
+        min(
+          420px,
+          100%
+        );
+
+      background:
+        white;
+
+      border-radius:
+        22px;
+
+      padding:
+        32px;
+
+      text-align:
+        center;
+
+      box-shadow:
+        var(--shadow);
+
+      border-top:
+        8px
+        solid
+        var(--red);
+
+    }
+
+
+    .pin-card h2 {
+
+      margin:
+        4px
+        0
+        8px;
+
+      color:
+        var(--dark-blue);
+
+    }
+
+
+    .pin-help {
+
+      color:
+        var(--muted);
+
+      margin-bottom:
+        20px;
+
+      line-height:
+        1.5;
+
+    }
+
+
+    .pin-card input {
+
+      width:
+        100%;
+
+      padding:
+        13px
+        14px;
+
+      text-align:
+        center;
+
+      font-size:
+        1.3rem;
+
+      letter-spacing:
+        .25em;
+
+      border:
+        1px
+        solid
+        var(--border);
+
+      border-radius:
+        12px;
+
+      margin-bottom:
+        12px;
+
+      background:
+        white;
+
+    }
+
+
+    .pin-card input:focus {
+
+      outline:
+        3px
+        solid
+        rgba(
+          42,
+          117,
+          187,
+          .18
+        );
+
+      border-color:
+        var(--blue);
+
+    }
+
+
+    .pin-card button {
+
+      width:
+        100%;
+
+    }
+
+
+    .pin-error {
+
+      color:
+        var(--red);
+
+      font-weight:
+        700;
+
+      min-height:
+        22px;
+
+      margin:
+        14px
+        0
+        0;
+
+    }
+
+
+    /* =====================================================
+       MAIN PAGE
+    ===================================================== */
+
+    .page-shell {
+
+      width:
+        min(
+          1100px,
+          calc(100% - 28px)
+        );
+
+      margin:
+        0
+        auto;
 
       padding:
         34px
         0
         50px;
+
     }
 
+
     .card {
-      background: var(--card);
+
+      background:
+        var(--card);
 
       border:
         1px
         solid
-        rgba(255,255,255,.7);
+        rgba(
+          255,
+          255,
+          255,
+          .7
+        );
 
       border-radius:
         22px;
@@ -99,9 +292,12 @@
 
       box-shadow:
         var(--shadow);
+
     }
 
+
     .hero-card {
+
       text-align:
         center;
 
@@ -109,9 +305,12 @@
         8px
         solid
         var(--red);
+
     }
 
+
     .hero-card h1 {
+
       margin:
         4px
         0
@@ -126,17 +325,26 @@
 
       color:
         var(--dark-blue);
+
+      letter-spacing:
+        -0.04em;
+
     }
 
+
     .subtitle {
+
       color:
         var(--muted);
 
       margin:
         0;
+
     }
 
+
     .eyebrow {
+
       text-transform:
         uppercase;
 
@@ -153,10 +361,19 @@
         var(--red);
 
       margin:
-        0 0 8px;
+        0
+        0
+        8px;
+
     }
 
+
+    /* =====================================================
+       POKEBALL
+    ===================================================== */
+
     .pokeball {
+
       width:
         58px;
 
@@ -167,7 +384,9 @@
         50%;
 
       margin:
-        0 auto 12px;
+        0
+        auto
+        12px;
 
       background:
         radial-gradient(
@@ -183,18 +402,30 @@
         );
 
       border:
-        4px solid #111;
+        4px
+        solid
+        #111;
+
     }
 
+
+    /* =====================================================
+       FORM / INPUT
+    ===================================================== */
+
     .admin-grid {
+
       display:
         grid;
 
       gap:
         18px;
+
     }
 
+
     label {
+
       display:
         grid;
 
@@ -203,14 +434,18 @@
 
       font-weight:
         750;
+
     }
 
+
     input {
+
       width:
         100%;
 
       padding:
-        13px 14px;
+        13px
+        14px;
 
       border:
         1px
@@ -225,9 +460,34 @@
 
       background:
         white;
+
     }
 
+
+    input:focus {
+
+      outline:
+        3px
+        solid
+        rgba(
+          42,
+          117,
+          187,
+          .18
+        );
+
+      border-color:
+        var(--blue);
+
+    }
+
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+
     button {
+
       border:
         0;
 
@@ -235,7 +495,8 @@
         12px;
 
       padding:
-        13px 18px;
+        13px
+        18px;
 
       font:
         inherit;
@@ -245,25 +506,61 @@
 
       cursor:
         pointer;
+
+      transition:
+        transform
+        .15s
+        ease,
+        box-shadow
+        .15s
+        ease;
+
     }
 
+
+    button:hover {
+
+      transform:
+        translateY(-1px);
+
+    }
+
+
     .primary-btn {
+
       background:
         var(--blue);
 
       color:
         white;
+
+      box-shadow:
+        0
+        8px
+        20px
+        rgba(
+          42,
+          117,
+          187,
+          .22
+        );
+
     }
 
+
     .secondary-btn {
+
       background:
         var(--yellow);
 
       color:
         #302700;
+
     }
 
+
     .button-stack {
+
       display:
         flex;
 
@@ -272,17 +569,33 @@
 
       gap:
         10px;
+
+      align-items:
+        end;
+
     }
 
+
+    /* =====================================================
+       TEXT / STATUS
+    ===================================================== */
+
     .help-text {
+
       color:
         var(--muted);
 
       font-size:
         .95rem;
+
+      line-height:
+        1.5;
+
     }
 
+
     .status {
+
       margin-top:
         14px;
 
@@ -291,9 +604,16 @@
 
       font-weight:
         650;
+
     }
 
+
+    /* =====================================================
+       PARTICIPANT TABLE
+    ===================================================== */
+
     .section-heading {
+
       display:
         flex;
 
@@ -305,14 +625,20 @@
 
       align-items:
         center;
+
     }
+
 
     .table-wrap {
+
       overflow-x:
         auto;
+
     }
 
+
     table {
+
       width:
         100%;
 
@@ -321,23 +647,30 @@
 
       margin-top:
         12px;
+
     }
+
 
     th,
     td {
+
       text-align:
         left;
 
       padding:
-        12px 10px;
+        12px
+        10px;
 
       border-bottom:
         1px
         solid
         var(--border);
+
     }
 
+
     th {
+
       font-size:
         .8rem;
 
@@ -349,16 +682,26 @@
 
       color:
         var(--muted);
+
     }
 
+
+    /* =====================================================
+       TEAM OVERVIEW
+    ===================================================== */
+
     .team-grid {
+
       display:
         grid;
 
       grid-template-columns:
         repeat(
           auto-fit,
-          minmax(220px, 1fr)
+          minmax(
+            220px,
+            1fr
+          )
         );
 
       gap:
@@ -366,9 +709,12 @@
 
       margin-top:
         18px;
+
     }
 
+
     .team-tile {
+
       border:
         1px
         solid
@@ -381,52 +727,78 @@
         16px;
 
       background:
-        white;
+        #fff;
+
     }
 
+
     .team-tile h3 {
+
       margin:
-        0 0 8px;
+        0
+        0
+        8px;
 
       color:
         var(--dark-blue);
+
     }
 
+
     .team-meta {
+
       color:
         var(--muted);
 
       font-size:
         .9rem;
+
     }
 
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
     footer {
+
       text-align:
         center;
 
       padding-top:
         8px;
+
     }
 
+
     footer a {
+
       color:
         var(--dark-blue);
 
       font-weight:
         750;
+
     }
+
+
+    /* =====================================================
+       DESKTOP
+    ===================================================== */
 
     @media (
       min-width: 760px
     ) {
 
       .admin-grid {
+
         grid-template-columns:
           240px
           1fr;
 
         align-items:
           end;
+
       }
 
     }
@@ -438,27 +810,41 @@
 
 <body>
 
+
   <!-- =====================================================
-       ADMIN PIN SCREEN
-  ====================================================== -->
+       PIN SCREEN
+  ===================================================== -->
 
-  <div id="pinScreen" class="pin-screen">
+  <div
+    id="pinScreen"
+    class="pin-screen"
+  >
 
-    <div class="pin-card">
+    <div
+      class="pin-card"
+    >
 
-      <div class="pokeball"></div>
+      <div
+        class="pokeball"
+        aria-hidden="true"
+      ></div>
+
 
       <p class="eyebrow">
         Admin Access
       </p>
 
+
       <h2>
         Enter Admin PIN
       </h2>
 
+
       <p class="pin-help">
-        Enter the PIN to access the Team Control Centre.
+        Enter the PIN to access the
+        Pokémon Team Control Centre.
       </p>
+
 
       <input
         id="adminPin"
@@ -469,12 +855,14 @@
         autocomplete="off"
       />
 
+
       <button
         id="unlockAdmin"
         class="primary-btn"
       >
         Unlock
       </button>
+
 
       <p
         id="pinError"
@@ -486,26 +874,40 @@
   </div>
 
 
+
+  <!-- =====================================================
+       ADMIN CONTENT
+  ===================================================== -->
+
   <main
     id="adminContent"
     class="page-shell hidden"
   >
 
 
-    <section class="card hero-card">
+    <!-- ===================================================
+         HEADER
+    =================================================== -->
+
+    <section
+      class="card hero-card"
+    >
 
       <div
         class="pokeball"
         aria-hidden="true"
       ></div>
 
+
       <p class="eyebrow">
         Admin Console
       </p>
 
+
       <h1>
         Pokémon Team Control Centre
       </h1>
+
 
       <p class="subtitle">
         Set the number of teams, manage participants
@@ -516,9 +918,18 @@
 
 
 
-    <section class="card">
+    <!-- ===================================================
+         TEAM SETTINGS
+    =================================================== -->
 
-      <div class="admin-grid">
+    <section
+      class="card"
+    >
+
+      <div
+        class="admin-grid"
+      >
+
 
         <label>
 
@@ -535,11 +946,14 @@
         </label>
 
 
-        <div class="button-stack">
+        <div
+          class="button-stack"
+        >
 
           <button
             id="saveTeamCount"
             class="secondary-btn"
+            type="button"
           >
             Save Team Count
           </button>
@@ -548,6 +962,7 @@
           <button
             id="releaseTeams"
             class="primary-btn"
+            type="button"
           >
             Assign & Release Groupings
           </button>
@@ -558,9 +973,11 @@
 
 
       <p class="help-text">
+
         Team assignment prioritises similar team sizes,
         Policy / Planning balance,
         and spreading departments across teams.
+
       </p>
 
 
@@ -574,9 +991,17 @@
 
 
 
-    <section class="card">
+    <!-- ===================================================
+         PARTICIPANTS
+    =================================================== -->
 
-      <div class="section-heading">
+    <section
+      class="card"
+    >
+
+      <div
+        class="section-heading"
+      >
 
         <div>
 
@@ -584,7 +1009,10 @@
             Live Participants
           </p>
 
-          <h2 id="participantCount">
+
+          <h2
+            id="participantCount"
+          >
             0 participants
           </h2>
 
@@ -594,6 +1022,7 @@
         <button
           id="clearAllParticipants"
           class="secondary-btn"
+          type="button"
         >
           Clear All Participants
         </button>
@@ -601,7 +1030,9 @@
       </div>
 
 
-      <div class="table-wrap">
+      <div
+        class="table-wrap"
+      >
 
         <table>
 
@@ -609,15 +1040,25 @@
 
             <tr>
 
-              <th>Name</th>
+              <th>
+                Name
+              </th>
 
-              <th>Group</th>
+              <th>
+                Group
+              </th>
 
-              <th>Department</th>
+              <th>
+                Department
+              </th>
 
-              <th>Team</th>
+              <th>
+                Team
+              </th>
 
-              <th>Action</th>
+              <th>
+                Action
+              </th>
 
             </tr>
 
@@ -636,11 +1077,18 @@
 
 
 
-    <section class="card">
+    <!-- ===================================================
+         TEAM OVERVIEW
+    =================================================== -->
+
+    <section
+      class="card"
+    >
 
       <p class="eyebrow">
         Team Overview
       </p>
+
 
       <div
         id="teamOverview"
@@ -651,9 +1099,15 @@
 
 
 
+    <!-- ===================================================
+         FOOTER
+    =================================================== -->
+
     <footer>
 
-      <a href="index.html">
+      <a
+        href="index.html"
+      >
         Participant Page
       </a>
 
@@ -663,6 +1117,10 @@
   </main>
 
 
+
+  <!-- =====================================================
+       JAVASCRIPT
+  ===================================================== -->
 
   <script type="module">
 
@@ -692,19 +1150,174 @@
 
 
     // =====================================================
+    // ADMIN PIN
+    // =====================================================
+
+    // CHANGE THIS TO YOUR ACTUAL PIN
+    const ADMIN_PIN = "2600";
+
+
+    const pinScreen =
+      document.getElementById(
+        "pinScreen"
+      );
+
+
+    const adminContent =
+      document.getElementById(
+        "adminContent"
+      );
+
+
+    const adminPinInput =
+      document.getElementById(
+        "adminPin"
+      );
+
+
+    const unlockAdminBtn =
+      document.getElementById(
+        "unlockAdmin"
+      );
+
+
+    const pinError =
+      document.getElementById(
+        "pinError"
+      );
+
+
+
+    function unlockAdmin() {
+
+      if (
+        adminPinInput.value
+        ===
+        ADMIN_PIN
+      ) {
+
+        pinScreen.classList.add(
+          "hidden"
+        );
+
+
+        adminContent.classList.remove(
+          "hidden"
+        );
+
+
+        sessionStorage.setItem(
+          "pokemonAdminUnlocked",
+          "yes"
+        );
+
+
+        pinError.textContent =
+          "";
+
+      }
+
+      else {
+
+        pinError.textContent =
+          "Incorrect PIN. Please try again.";
+
+        adminPinInput.value =
+          "";
+
+        adminPinInput.focus();
+
+      }
+
+    }
+
+
+
+    unlockAdminBtn.addEventListener(
+
+      "click",
+
+      unlockAdmin
+
+    );
+
+
+
+    adminPinInput.addEventListener(
+
+      "keydown",
+
+      event => {
+
+        if (
+          event.key
+          ===
+          "Enter"
+        ) {
+
+          unlockAdmin();
+
+        }
+
+      }
+
+    );
+
+
+
+    // =====================================================
+    // REMEMBER UNLOCK DURING THIS BROWSER SESSION
+    // =====================================================
+
+    if (
+
+      sessionStorage.getItem(
+        "pokemonAdminUnlocked"
+      )
+      ===
+      "yes"
+
+    ) {
+
+      pinScreen.classList.add(
+        "hidden"
+      );
+
+      adminContent.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+
+    // =====================================================
     // FIREBASE CONFIG
-    //
-    // USE THE EXACT SAME CONFIG AS index.html
     // =====================================================
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDbYUYL4vD9rCsrelxR4jqKVd_5A9FrJ0s",
-      authDomain: "pokemon-sorter.firebaseapp.com",
-      projectId: "pokemon-sorter",
-      storageBucket: "pokemon-sorter.firebasestorage.app",
-      messagingSenderId: "677526990404",
-      appId: "1:677526990404:web:0c35ff6d1fc1da98e85611",
-      measurementId: "G-HS4TY83B2J"
+
+      apiKey:
+        "AIzaSyDbYUYL4vD9rCsrelxR4jqKVd_5A9FrJ0s",
+
+      authDomain:
+        "pokemon-sorter.firebaseapp.com",
+
+      projectId:
+        "pokemon-sorter",
+
+      storageBucket:
+        "pokemon-sorter.firebasestorage.app",
+
+      messagingSenderId:
+        "677526990404",
+
+      appId:
+        "1:677526990404:web:0c35ff6d1fc1da98e85611",
+
+      measurementId:
+        "G-HS4TY83B2J"
+
     };
 
 
@@ -717,6 +1330,7 @@
       initializeApp(
         firebaseConfig
       );
+
 
     const db =
       getFirestore(
@@ -734,35 +1348,42 @@
         "teamCount"
       );
 
+
     const saveTeamCountBtn =
       document.getElementById(
         "saveTeamCount"
       );
+
 
     const releaseTeamsBtn =
       document.getElementById(
         "releaseTeams"
       );
 
+
     const clearAllBtn =
       document.getElementById(
         "clearAllParticipants"
       );
+
 
     const adminStatus =
       document.getElementById(
         "adminStatus"
       );
 
+
     const participantCount =
       document.getElementById(
         "participantCount"
       );
 
+
     const participantTableBody =
       document.getElementById(
         "participantTableBody"
       );
+
 
     const teamOverview =
       document.getElementById(
@@ -772,7 +1393,7 @@
 
 
     // =====================================================
-    // TEAM NAMES
+    // POKEMON TEAM NAMES
     // =====================================================
 
     const POKEMON_TEAM_NAMES = [
@@ -811,6 +1432,7 @@
       "Leafeon"
 
     ];
+
 
 
     let currentParticipants = [];
@@ -882,7 +1504,7 @@
 
 
     // =====================================================
-    // TEAM COUNT
+    // LOAD TEAM COUNT
     // =====================================================
 
     async function loadTeamCount() {
@@ -917,7 +1539,7 @@
 
 
     // =====================================================
-    // BALANCING
+    // DEPARTMENT PENALTY
     // =====================================================
 
     function departmentPenalty(
@@ -949,6 +1571,10 @@
 
 
 
+    // =====================================================
+    // PLACE PEOPLE
+    // =====================================================
+
     function placePeople(
       people,
       teams
@@ -967,10 +1593,11 @@
               b
             ) => {
 
-              // -----------------------------------------
+
+              // -------------------------------------------
               // PRIORITY 1:
-              // Keep team sizes equal
-              // -----------------------------------------
+              // TEAM SIZE
+              // -------------------------------------------
 
               const sizeDifference =
                 a.members.length
@@ -979,7 +1606,9 @@
 
 
               if (
-                sizeDifference !== 0
+                sizeDifference
+                !==
+                0
               ) {
 
                 return sizeDifference;
@@ -988,10 +1617,10 @@
 
 
 
-              // -----------------------------------------
+              // -------------------------------------------
               // PRIORITY 2:
-              // Balance Policy / Planning
-              // -----------------------------------------
+              // POLICY / PLANNING BALANCE
+              // -------------------------------------------
 
               const aSameGroup =
                 a.members.filter(
@@ -1031,10 +1660,10 @@
 
 
 
-              // -----------------------------------------
+              // -------------------------------------------
               // PRIORITY 3:
-              // Spread departments
-              // -----------------------------------------
+              // DEPARTMENT SPREAD
+              // -------------------------------------------
 
               const departmentDifference =
 
@@ -1063,9 +1692,9 @@
 
 
 
-              // -----------------------------------------
+              // -------------------------------------------
               // RANDOM TIE BREAK
-              // -----------------------------------------
+              // -------------------------------------------
 
               return (
                 Math.random()
@@ -1089,6 +1718,10 @@
     }
 
 
+
+    // =====================================================
+    // REBALANCE
+    // =====================================================
 
     function rebalanceParticipants(
       participants,
@@ -1240,6 +1873,7 @@
           .slice()
 
           .sort(
+
             (
               a,
               b
@@ -1291,6 +1925,7 @@
               );
 
             }
+
           )
 
           .map(
@@ -1333,6 +1968,7 @@
                     class="remove-participant-btn secondary-btn"
                     data-id="${escapeHtml(person.id)}"
                     data-name="${escapeHtml(person.name)}"
+                    type="button"
                   >
                     Remove
                   </button>
@@ -1349,9 +1985,9 @@
 
 
 
-      // =================================================
+      // ===================================================
       // REMOVE BUTTONS
-      // =================================================
+      // ===================================================
 
       document
         .querySelectorAll(
@@ -1434,9 +2070,9 @@
 
 
 
-      // =================================================
+      // ===================================================
       // TEAM OVERVIEW
-      // =================================================
+      // ===================================================
 
       const teamCount =
         Number(
@@ -1530,7 +2166,9 @@
 
               return `
 
-                <article class="team-tile">
+                <article
+                  class="team-tile"
+                >
 
                   <h3>
                     ${escapeHtml(
@@ -1538,7 +2176,10 @@
                     )}
                   </h3>
 
-                  <p class="team-meta">
+
+                  <p
+                    class="team-meta"
+                  >
 
                     ${team.members.length}
                     total
@@ -1554,6 +2195,7 @@
                     Planning
 
                   </p>
+
 
                   <p>
 
@@ -1596,6 +2238,7 @@
 
 
         if (
+
           !Number.isInteger(
             count
           )
@@ -1607,6 +2250,7 @@
           ||
 
           count > 30
+
         ) {
 
           adminStatus.textContent =
@@ -1628,13 +2272,17 @@
             ),
 
             {
+
               teamCount:
                 count
+
             },
 
             {
+
               merge:
                 true
+
             }
 
           );
@@ -1671,7 +2319,7 @@
 
 
     // =====================================================
-    // ASSIGN & RELEASE TEAMS
+    // ASSIGN & RELEASE GROUPINGS
     // =====================================================
 
     releaseTeamsBtn.addEventListener(
@@ -1687,6 +2335,7 @@
 
 
         if (
+
           !Number.isInteger(
             teamCount
           )
@@ -1698,6 +2347,7 @@
           ||
 
           teamCount > 30
+
         ) {
 
           adminStatus.textContent =
@@ -1761,6 +2411,7 @@
             );
 
 
+          // Save team count
 
           batch.set(
 
@@ -1787,6 +2438,8 @@
           );
 
 
+
+          // Assign every participant
 
           for (
             const team
@@ -1853,7 +2506,7 @@
 
 
     // =====================================================
-    // CLEAR ALL
+    // CLEAR ALL PARTICIPANTS
     // =====================================================
 
     clearAllBtn.addEventListener(
@@ -1918,24 +2571,23 @@
             );
 
 
-          currentParticipants
-            .forEach(
+          currentParticipants.forEach(
 
-              participant => {
+            participant => {
 
-                batch.delete(
+              batch.delete(
 
-                  doc(
-                    db,
-                    "participants",
-                    participant.id
-                  )
+                doc(
+                  db,
+                  "participants",
+                  participant.id
+                )
 
-                );
+              );
 
-              }
+            }
 
-            );
+          );
 
 
           await batch.commit();
@@ -1967,9 +2619,7 @@
 
 
     // =====================================================
-    // LIVE PARTICIPANT LIST
-    //
-    // THIS MAKES NEW REGISTRATIONS APPEAR AUTOMATICALLY.
+    // LIVE PARTICIPANTS
     // =====================================================
 
     onSnapshot(
@@ -2022,15 +2672,32 @@
     // START
     // =====================================================
 
-    await loadTeamCount();
+    try {
 
+      await loadTeamCount();
 
-    renderParticipants(
-      currentParticipants
-    );
+      renderParticipants(
+        currentParticipants
+      );
+
+    }
+
+    catch (
+      error
+    ) {
+
+      console.error(
+        error
+      );
+
+      adminStatus.textContent =
+        "Unable to load team settings.";
+
+    }
 
 
   </script>
 
 </body>
+
 </html>
