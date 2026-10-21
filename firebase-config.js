@@ -6,7 +6,7 @@
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDbYUYL4vD9rCsrelxR4jqKVd_5A9FrJ0s",
   authDomain: "pokemon-sorter.firebaseapp.com",
   projectId: "pokemon-sorter",
