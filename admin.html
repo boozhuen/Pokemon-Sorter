@@ -972,13 +972,14 @@
       </div>
 
 
+      
       <p class="help-text">
-
-        Team assignment prioritises similar team sizes,
-        Policy / Planning balance,
-        and spreading departments across teams.
-
+        Team assignment distributes Policy, Planning,
+        Admin and Head participants as evenly as possible
+        across teams, while also balancing overall team
+        sizes and departments.
       </p>
+
 
 
       <div
@@ -1719,128 +1720,130 @@
 
 
 
-    // =====================================================
-    // REBALANCE
-    // =====================================================
+   
+function rebalanceParticipants(participants, teamCount) {
 
-    function rebalanceParticipants(
-      participants,
-      teamCount
-    ) {
+  // ======================================================
+  // NEW: FOUR-GROUP BALANCING
+  // ======================================================
 
-      const teams =
-        Array.from(
+  const GROUPS = [
+    "Policy",
+    "Planning",
+    "Admin",
+    "Head"
+  ];
 
-          {
-            length:
-              teamCount
-          },
+  // Create empty teams
+  const teams = Array.from(
+    { length: teamCount },
+    (_, index) => ({
+      index,
+      name: teamName(index),
+      members: []
+    })
+  );
 
-          (
-            _,
-            index
-          ) => ({
+  // Shuffle participants without changing original array
+  function shuffle(array) {
+    const result = [...array];
 
-            index:
-              index,
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
 
-            name:
-              teamName(
-                index
-              ),
+    return result;
+  }
 
-            members:
-              []
+  // Separate all four groups
+  const grouped = GROUPS.map(group => ({
+    group,
+    people: shuffle(
+      participants.filter(
+        person => person.group === group
+      )
+    )
+  }));
 
-          })
+  // Validate all participants have recognised groups
+  const recognisedCount = grouped.reduce(
+    (sum, item) => sum + item.people.length,
+    0
+  );
 
+  if (recognisedCount !== participants.length) {
+    throw new Error(
+      "Some participants have unrecognised groups."
+    );
+  }
+
+  // Process smaller groups first to improve
+  // distribution of Admin and Head participants.
+  grouped.sort(
+    (a, b) => a.people.length - b.people.length
+  );
+
+  // ======================================================
+  // NEW: ALLOCATE PARTICIPANTS
+  // ======================================================
+
+  for (const groupData of grouped) {
+
+    for (const person of groupData.people) {
+
+      const candidates = teams.map(team => {
+
+        const sameGroup = team.members.filter(
+          member => member.group === person.group
+        ).length;
+
+        const sameDepartment = departmentPenalty(
+          team,
+          person.department
         );
 
+        return {
+          team,
+          sameGroup,
+          sameDepartment,
+          teamSize: team.members.length,
+          random: Math.random()
+        };
 
+      });
 
-      const policy =
-        participants
+      // PRIORITY 1: Spread each group across teams
+      // PRIORITY 2: Keep overall team sizes equal
+      // PRIORITY 3: Spread departments
+      // PRIORITY 4: Random tie-break
+      candidates.sort((a, b) => {
 
-          .filter(
-            person =>
-              person.group
-              ===
-              "Policy"
-          )
+        if (a.sameGroup !== b.sameGroup) {
+          return a.sameGroup - b.sameGroup;
+        }
 
-          .sort(
-            () =>
-              Math.random()
-              -
-              0.5
-          );
+        if (a.teamSize !== b.teamSize) {
+          return a.teamSize - b.teamSize;
+        }
 
+        if (a.sameDepartment !== b.sameDepartment) {
+          return a.sameDepartment - b.sameDepartment;
+        }
 
+        return a.random - b.random;
 
-      const planning =
-        participants
+      });
 
-          .filter(
-            person =>
-              person.group
-              ===
-              "Planning"
-          )
-
-          .sort(
-            () =>
-              Math.random()
-              -
-              0.5
-          );
-
-
-
-      const first =
-        Math.random()
-        <
-        0.5
-
-        ?
-
-        policy
-
-        :
-
-        planning;
-
-
-
-      const second =
-        first
-        ===
-        policy
-
-        ?
-
-        planning
-
-        :
-
-        policy;
-
-
-
-      placePeople(
-        first,
-        teams
-      );
-
-
-      placePeople(
-        second,
-        teams
-      );
-
-
-      return teams;
+      candidates[0].team.members.push(person);
 
     }
+
+  }
+
+  return teams;
+}
+
 
 
 
@@ -2127,26 +2130,23 @@
 
             team => {
 
-              const policy =
-                team.members.filter(
-
-                  person =>
-                    person.group
-                    ===
-                    "Policy"
-
+              
+                const policy = team.members.filter(
+                  person => person.group === "Policy"
+                ).length;
+                
+                const planning = team.members.filter(
+                  person => person.group === "Planning"
+                ).length;
+                
+                const admin = team.members.filter(
+                  person => person.group === "Admin"
+                ).length;
+                
+                const head = team.members.filter(
+                  person => person.group === "Head"
                 ).length;
 
-
-              const planning =
-                team.members.filter(
-
-                  person =>
-                    person.group
-                    ===
-                    "Planning"
-
-                ).length;
 
 
               const memberNames =
@@ -2177,24 +2177,29 @@
                   </h3>
 
 
-                  <p
-                    class="team-meta"
-                  >
+                 
+                    <p class="team-meta">
+                    
+                      ${team.members.length} total
+                    
+                      •
+                    
+                      ${policy} Policy
+                    
+                      •
+                    
+                      ${planning} Planning
+                    
+                      •
+                    
+                      ${admin} Admin
+                    
+                      •
+                    
+                      ${head} Head
+                    
+                    </p>
 
-                    ${team.members.length}
-                    total
-
-                    •
-
-                    ${policy}
-                    Policy
-
-                    •
-
-                    ${planning}
-                    Planning
-
-                  </p>
 
 
                   <p>
