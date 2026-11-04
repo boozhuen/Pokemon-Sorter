@@ -967,6 +967,14 @@
             Assign & Release Groupings
           </button>
 
+          <button
+            id="assignNewcomers"
+            class="secondary-btn"
+            type="button"
+          >
+            Assign Newcomers
+          </button>      
+          
         </div>
 
       </div>
@@ -1051,6 +1059,10 @@
 
               <th>
                 Department
+              </th>
+
+              <th>
+                Phone Number
               </th>
 
               <th>
@@ -1845,7 +1857,152 @@ function rebalanceParticipants(participants, teamCount) {
 }
 
 
+// ======================================================
+// ASSIGN NEWCOMERS TO EXISTING TEAMS
+// ======================================================
 
+function assignNewcomersToExistingTeams(
+  participants,
+  teamCount
+) {
+
+  const GROUPS = [
+    "Policy",
+    "Planning",
+    "Admin",
+    "Head"
+  ];
+
+  // Create teams with existing members retained.
+  const teams = Array.from(
+    { length: teamCount },
+    (_, index) => ({
+      index,
+      name: teamName(index),
+      members: participants.filter(
+        person => person.teamIndex === index
+      )
+    })
+  );
+
+  // Only select participants without an assigned team.
+  const newcomers = participants.filter(
+    person => !Number.isInteger(person.teamIndex)
+  );
+
+  // Validate groups.
+  if (
+    newcomers.some(
+      person => !GROUPS.includes(person.group)
+    )
+  ) {
+    throw new Error(
+      "Some newcomers have unrecognised groups."
+    );
+  }
+
+  // Fisher-Yates shuffle.
+  function shuffle(array) {
+
+    const result = [...array];
+
+    for (let i = result.length - 1; i > 0; i--) {
+
+      const j = Math.floor(
+        Math.random() * (i + 1)
+      );
+
+      [result[i], result[j]] =
+        [result[j], result[i]];
+
+    }
+
+    return result;
+  }
+
+  // Same group processing order as initial sorting.
+  const grouped = GROUPS.map(group => ({
+    group,
+    people: shuffle(
+      newcomers.filter(
+        person => person.group === group
+      )
+    )
+  }));
+
+  grouped.sort(
+    (a, b) => a.people.length - b.people.length
+  );
+
+  const allocations = [];
+
+  for (const groupData of grouped) {
+
+    for (const person of groupData.people) {
+
+      const candidates = teams.map(team => {
+
+        const sameGroup = team.members.filter(
+          member => member.group === person.group
+        ).length;
+
+        const sameDepartment = departmentPenalty(
+          team,
+          person.department
+        );
+
+        return {
+          team,
+          sameGroup,
+          sameDepartment,
+          teamSize: team.members.length,
+          random: Math.random()
+        };
+
+      });
+
+      // Retain original sorting priorities:
+      // 1. Group distribution
+      // 2. Overall team size
+      // 3. Department distribution
+      // 4. Random tie-break
+
+      candidates.sort((a, b) => {
+
+        if (a.sameGroup !== b.sameGroup) {
+          return a.sameGroup - b.sameGroup;
+        }
+
+        if (a.teamSize !== b.teamSize) {
+          return a.teamSize - b.teamSize;
+        }
+
+        if (
+          a.sameDepartment !== b.sameDepartment
+        ) {
+          return a.sameDepartment - b.sameDepartment;
+        }
+
+        return a.random - b.random;
+
+      });
+
+      const selectedTeam = candidates[0].team;
+
+      selectedTeam.members.push(person);
+
+      allocations.push({
+        id: person.id,
+        teamIndex: selectedTeam.index,
+        teamName: selectedTeam.name
+      });
+
+    }
+
+  }
+
+  return allocations;
+}
 
     // =====================================================
     // RENDER PARTICIPANTS
@@ -1954,7 +2111,11 @@ function rebalanceParticipants(participants, teamCount) {
                     person.department
                   )}
                 </td>
-
+                
+                <td>
+                  ${escapeHtml(person.phone || "—")}
+                </td>
+                
                 <td>
                   ${
                     escapeHtml(
@@ -2508,6 +2669,139 @@ function rebalanceParticipants(participants, teamCount) {
 
     );
 
+    // ======================================================
+// ASSIGN NEWCOMERS BUTTON
+// ======================================================
+
+document.getElementById("assignNewcomers")
+  .addEventListener("click", async () => {
+
+    const teamCount = Number(teamCountInput.value);
+
+    if (
+      !Number.isInteger(teamCount) ||
+      teamCount < 2 ||
+      teamCount > 30
+    ) {
+      adminStatus.textContent =
+        "Please choose between 2 and 30 teams.";
+      return;
+    }
+
+    const newcomers = currentParticipants.filter(
+      person => !Number.isInteger(person.teamIndex)
+    );
+
+    const existing = currentParticipants.filter(
+      person => Number.isInteger(person.teamIndex)
+    );
+
+    if (existing.length === 0) {
+      adminStatus.textContent =
+        "Please assign and release the initial teams first.";
+      return;
+    }
+
+    if (newcomers.length === 0) {
+      adminStatus.textContent =
+        "There are no unassigned newcomers.";
+      return;
+    }
+
+    // Make sure existing assignments match the team count.
+    if (
+      existing.some(
+        person =>
+          person.teamIndex < 0 ||
+          person.teamIndex >= teamCount
+      )
+    ) {
+      adminStatus.textContent =
+        "Team count does not match existing assignments.";
+      return;
+    }
+
+    // Ensure the saved team count has not changed.
+    const settingsSnap = await getDoc(
+      doc(db, "config", "settings")
+    );
+
+    if (
+      !settingsSnap.exists() ||
+      Number(settingsSnap.data().teamCount) !== teamCount
+    ) {
+      adminStatus.textContent =
+        "Please use the existing saved team count.";
+      return;
+    }
+
+    const confirmed = confirm(
+      `Assign ${newcomers.length} newcomer(s) ` +
+      `without reshuffling ${existing.length} ` +
+      `existing participants?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    adminStatus.textContent =
+      "Assigning newcomers...";
+
+    try {
+
+      const allocations =
+        assignNewcomersToExistingTeams(
+          currentParticipants,
+          teamCount
+        );
+
+      // Firestore batch limit: 500 writes.
+      // Only newcomers are updated.
+      for (
+        let i = 0;
+        i < allocations.length;
+        i += 450
+      ) {
+
+        const batch = writeBatch(db);
+
+        const chunk = allocations.slice(
+          i,
+          i + 450
+        );
+
+        for (const person of chunk) {
+
+          batch.update(
+            doc(db, "participants", person.id),
+            {
+              teamIndex: person.teamIndex,
+              teamName: person.teamName
+            }
+          );
+
+        }
+
+        await batch.commit();
+
+      }
+
+      adminStatus.textContent =
+        `${allocations.length} newcomer(s) assigned ` +
+        "successfully. Existing teams were preserved.";
+
+    } catch (error) {
+
+      console.error(error);
+
+      adminStatus.textContent =
+        "Could not assign newcomers. " +
+        "Please check the participant list.";
+
+    }
+
+  });
 
 
     // =====================================================
