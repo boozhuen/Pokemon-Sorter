@@ -504,6 +504,19 @@
           />
         </label>
 
+        <label>
+          Phone Number
+        
+          <input
+            id="phone"
+            type="tel"
+            inputmode="tel"
+            autocomplete="tel"
+            required
+            maxlength="20"
+            placeholder="e.g. 91234567"
+          />
+        </label>      
 
         <button
           type="submit"
@@ -1012,24 +1025,29 @@
                 document.getElementById(
                   "department"
                 ).value
-              )
+              ),
 
+            phone:
+              normalise(
+                document.getElementById("phone").value
+            )
           };
 
 
           if (
-            !participant.name
-            ||
-            !participant.group
-            ||
-            !participant.department
+            !participant.name ||
+            !participant.group ||
+            !participant.department ||
+            !/^[689]\d{7}$/.test(
+              participant.phone.replace(/[\s-]/g, "")
+            )
           ) {
-
             throw new Error(
-              "Please complete all fields."
+              "Please complete all fields and enter a valid 8-digit Singapore phone number."
             );
-
           }
+
+            
 
 
 
